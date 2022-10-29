@@ -1,16 +1,13 @@
 import createLabelDb from "./label_maker/createLabelDb"
 import printGodex from "./label_maker/printGodex"
-
-export enum MessageChannel {
-    PrintLabel='print-label'
-}
+import { ZsMessageChannel } from "../shared/ZsMessageChannel"
 
 export const handleMessage = async (
     event: Electron.IpcMainEvent,
-    channel: MessageChannel,
+    channel: ZsMessageChannel,
     args: unknown[]) => {
     switch (channel) {
-        case MessageChannel.PrintLabel:
+        case ZsMessageChannel.PrintLabel:
             const filepath = await createLabelDb(args)
             if (!filepath) {
                 event.reply('fail')

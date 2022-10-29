@@ -1,22 +1,45 @@
+import React from 'react';
+import { ProvideApollo } from './apollo-firebase/with-apollo-firebase';
 import './App.css';
+import environment from './environment';
+import { auth } from './firebase';
+import AppRouter from './screens/AppRouter';
+import LoadingScreen from './screens/LoadingScreen';
+import LoginScreen from './screens/LoginScreen';
+import { ProvideClinic } from './services/clinic.context';
+import { ProvideDialog } from './services/dialog.context';
+import { ProvideUser } from './services/user.context';
 
-import React from 'react'
 
 function App() {
   const test = () => {
-    window.electron.ipcRenderer.sendMessage('zs-message', ['print-label', [
-      {
-        qr: 'zs/label_1',
-        user: 'Rebecca Leitch',
-        content: 'Lots of love',
-      }
-    ]])
+    // window.electron.ipcRenderer.sendMessage('zs-message', ['print-label', [
+    //   {
+    //     qr: 'zs/label_1',
+    //     user: 'Rebecca Leitch',
+    //     content: 'Lots of love',
+    //   }
+    // ]])
+    auth.signOut()
   }
   return (
-    <div className='bg-green-100 w-full h-screen'>
-        <div className='text-2xl font-bold'>TESTING</div>
-        <button className='p-4 bg-slate-200' onClick={test}>Press Me</button>
-    </div>
+    <ProvideDialog>
+      <ProvideApollo
+        is_dev={!environment.production}
+        backend_url={environment.backend_url}
+        backend_ws_url={environment.backend_ws_url}
+        LoadingScreen={<LoadingScreen />}
+        LoginScreen={<LoginScreen />}
+        auth={auth}
+      >
+        <ProvideClinic
+          LoadingScreen={<LoadingScreen title='Loading Clinic' />}>
+          <ProvideUser>
+            <AppRouter />
+          </ProvideUser>
+        </ProvideClinic>
+      </ProvideApollo>
+    </ProvideDialog>
   )
 }
 
