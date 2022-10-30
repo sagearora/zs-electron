@@ -13,13 +13,14 @@ const createLabelDb = async (arr: any[]): Promise<string|null> => {
 
     const items = arr.map(item => ({
         qr: item.qr,
-        date: dayjs().format('YYYY-MM-DD HH:mm'),
-        expiry: dayjs().add(DefaultExpiryMonths, 'month')
+        date: dayjs(item.date).format('YYYY-MM-DD HH:mm'),
+        expiry: dayjs(item.date).add(DefaultExpiryMonths, 'month')
             .format('YYYY-DD-MM HH:mm'),
         contents: item.contents,
         user: item.user,
     }))
     
+    console.log('print', JSON.stringify(items, null, 2))
     const filepath = join(app.getPath("temp"), `${v4()}.csv`);
     return new Promise((r) => fs.writeFile(filepath,
         parse(items, {
