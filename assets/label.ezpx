@@ -151,7 +151,7 @@
         <DataField>None</DataField>
         <Prompt>None</Prompt>
         <BoundRectWidth>179.671875</BoundRectWidth>
-        <DispData>Expiry: 2023-29-01 06:08</DispData>
+        <DispData>Expiry: 2023-29-01 21:57</DispData>
         <bRemovePreZeroAndEmpty>false</bRemovePreZeroAndEmpty>
         <Data>Expiry: ^F02</Data>
         <BoundRectHeight>17.875</BoundRectHeight>
@@ -203,7 +203,7 @@
           <Height>17.875</Height>
         </BoundRect>
       </GraphicShape>
-      <GraphicShape xsi:type="Text" Style="Cross" IsPrint="true" PageAlignment="None" Locked="false" bStroke="true" bFill="true" Direction="Angle0" X="10" Y="11" Alignment="Left" AlignPointX="10" AlignPointY="11" FontCmd="Microsoft Sans Serif,18&#xD;&#xA;" FontType="BuiltIn_Bitmap_Font" TextSpace="0" Encoding="Default" FontId="B" FontHeight="1" FontWidth="1" IsInverse="false" IsUTF8="false">
+      <GraphicShape xsi:type="Text" Style="Cross" IsPrint="true" PageAlignment="None" Locked="false" bStroke="true" bFill="true" Direction="Angle0" X="10" Y="17" Alignment="Left" AlignPointX="10" AlignPointY="17" FontCmd="Microsoft Sans Serif,18&#xD;&#xA;" FontType="BuiltIn_Bitmap_Font" TextSpace="0" Encoding="Default" FontId="A" FontHeight="1" FontWidth="1" IsInverse="false" IsUTF8="false">
         <qHitOnCircumferance>false</qHitOnCircumferance>
         <Selected>false</Selected>
         <iBackground_color>4294967295</iBackground_color>
@@ -216,27 +216,27 @@
         <P4 />
         <DataField>None</DataField>
         <Prompt>None</Prompt>
-        <BoundRectWidth>232.396484</BoundRectWidth>
-        <DispData>Date: 2022-10-29 06:08</DispData>
+        <BoundRectWidth>169.015625</BoundRectWidth>
+        <DispData>Date: 2022-10-29 21:57</DispData>
         <bRemovePreZeroAndEmpty>false</bRemovePreZeroAndEmpty>
         <Data>Date: ^F01</Data>
-        <BoundRectHeight>24.578125</BoundRectHeight>
+        <BoundRectHeight>17.875</BoundRectHeight>
         <BoundRect>
           <Location>
             <X>10</X>
-            <Y>11</Y>
+            <Y>17</Y>
           </Location>
           <Size>
-            <Width>232.396484</Width>
-            <Height>24.578125</Height>
+            <Width>169.015625</Width>
+            <Height>17.875</Height>
           </Size>
           <X>10</X>
-          <Y>11</Y>
-          <Width>232.396484</Width>
-          <Height>24.578125</Height>
+          <Y>17</Y>
+          <Width>169.015625</Width>
+          <Height>17.875</Height>
         </BoundRect>
       </GraphicShape>
-      <GraphicShape xsi:type="QRCode" Style="Cross" IsPrint="true" PageAlignment="None" Locked="false" bStroke="true" bFill="true" Direction="Angle0" X="264" Y="6" Alignment="Left" AlignPointX="264" AlignPointY="6" bGS1="false" CaptionAlignment="None" FontCmd="Microsoft Sans Serif,17&#xD;&#xA;" Mode="Auto" Type="2" ErrorCorrectionLevel="77" Mask="8" Multiple="6" IsUTF8="true">
+      <GraphicShape xsi:type="QRCode" Style="Cross" IsPrint="true" PageAlignment="None" Locked="false" bStroke="true" bFill="true" Direction="Angle0" X="230" Y="24" Alignment="Left" AlignPointX="230" AlignPointY="24" bGS1="false" CaptionAlignment="None" FontCmd="Microsoft Sans Serif,17&#xD;&#xA;" Mode="Auto" Type="2" ErrorCorrectionLevel="77" Mask="8" Multiple="6" IsUTF8="true">
         <qHitOnCircumferance>false</qHitOnCircumferance>
         <Selected>false</Selected>
         <iBackground_color>4294967295</iBackground_color>
@@ -249,24 +249,24 @@
         <P4 />
         <DataField>None</DataField>
         <Prompt>None</Prompt>
-        <BoundRectWidth>126</BoundRectWidth>
-        <DispData>zs/steri/1</DispData>
+        <BoundRectWidth>150</BoundRectWidth>
+        <DispData>zs/steri_label/47</DispData>
         <bRemovePreZeroAndEmpty>false</bRemovePreZeroAndEmpty>
         <Data>^F00</Data>
-        <BoundRectHeight>126</BoundRectHeight>
+        <BoundRectHeight>150</BoundRectHeight>
         <BoundRect>
           <Location>
-            <X>264</X>
-            <Y>6</Y>
+            <X>230</X>
+            <Y>24</Y>
           </Location>
           <Size>
-            <Width>126</Width>
-            <Height>126</Height>
+            <Width>150</Width>
+            <Height>150</Height>
           </Size>
-          <X>264</X>
-          <Y>6</Y>
-          <Width>126</Width>
-          <Height>126</Height>
+          <X>230</X>
+          <Y>24</Y>
+          <Width>150</Width>
+          <Height>150</Height>
         </BoundRect>
       </GraphicShape>
       <GraphicShape xsi:type="Text" Style="Cross" IsPrint="true" PageAlignment="None" Locked="false" bStroke="true" bFill="true" Direction="Angle0" X="10" Y="150" Alignment="Left" AlignPointX="10" AlignPointY="150" FontCmd="Microsoft Sans Serif,18&#xD;&#xA;" FontType="BuiltIn_Bitmap_Font" TextSpace="0" Encoding="Default" FontId="A" FontHeight="1" FontWidth="1" IsInverse="false" IsUTF8="false">
@@ -282,8 +282,8 @@
         <P4 />
         <DataField>None</DataField>
         <Prompt>None</Prompt>
-        <BoundRectWidth>80.94531</BoundRectWidth>
-        <DispData>High speed</DispData>
+        <BoundRectWidth>83.61719</BoundRectWidth>
+        <DispData>Loose perio</DispData>
         <bRemovePreZeroAndEmpty>false</bRemovePreZeroAndEmpty>
         <Data>^F04</Data>
         <BoundRectHeight>17.875</BoundRectHeight>
@@ -293,16 +293,16 @@
             <Y>150</Y>
           </Location>
           <Size>
-            <Width>80.94531</Width>
+            <Width>83.61719</Width>
             <Height>17.875</Height>
           </Size>
           <X>10</X>
           <Y>150</Y>
-          <Width>80.94531</Width>
+          <Width>83.61719</Width>
           <Height>17.875</Height>
         </BoundRect>
       </GraphicShape>
-      <GraphicShape xsi:type="Text" Style="Cross" IsPrint="true" PageAlignment="None" Locked="false" bStroke="true" bFill="true" Direction="Angle0" X="10" Y="41" Alignment="Left" AlignPointX="10" AlignPointY="41" FontCmd="Microsoft Sans Serif,18&#xD;&#xA;" FontType="BuiltIn_Bitmap_Font" TextSpace="0" Encoding="Default" FontId="B" FontHeight="1" FontWidth="1" IsInverse="false" IsUTF8="false">
+      <GraphicShape xsi:type="Text" Style="Cross" IsPrint="true" PageAlignment="None" Locked="false" bStroke="true" bFill="true" Direction="Angle0" X="10" Y="41" Alignment="Left" AlignPointX="10" AlignPointY="41" FontCmd="Microsoft Sans Serif,18&#xD;&#xA;" FontType="BuiltIn_Bitmap_Font" TextSpace="0" Encoding="Default" FontId="C" FontHeight="1" FontWidth="1" IsInverse="false" IsUTF8="false">
         <qHitOnCircumferance>false</qHitOnCircumferance>
         <Selected>false</Selected>
         <iBackground_color>4294967295</iBackground_color>
@@ -315,24 +315,24 @@
         <P4 />
         <DataField>None</DataField>
         <Prompt>None</Prompt>
-        <BoundRectWidth>90.4707</BoundRectWidth>
-        <DispData>User: Saj</DispData>
+        <BoundRectWidth>106.562988</BoundRectWidth>
+        <DispData>Rebecca</DispData>
         <bRemovePreZeroAndEmpty>false</bRemovePreZeroAndEmpty>
-        <Data>User: ^F03</Data>
-        <BoundRectHeight>24.578125</BoundRectHeight>
+        <Data>^F03</Data>
+        <BoundRectHeight>30.1640625</BoundRectHeight>
         <BoundRect>
           <Location>
             <X>10</X>
             <Y>41</Y>
           </Location>
           <Size>
-            <Width>90.4707</Width>
-            <Height>24.578125</Height>
+            <Width>106.562988</Width>
+            <Height>30.1640625</Height>
           </Size>
           <X>10</X>
           <Y>41</Y>
-          <Width>90.4707</Width>
-          <Height>24.578125</Height>
+          <Width>106.562988</Width>
+          <Height>30.1640625</Height>
         </BoundRect>
       </GraphicShape>
     </qlabel>
@@ -341,8 +341,8 @@
     <DateFormat>y2-me-dd</DateFormat>
     <TimeFormat>h:m:s</TimeFormat>
     <DataBaseFormat>Text_CommaDelimited</DataBaseFormat>
-    <DataBaseFilePath>C:\Users\smile\AppData\Local\Temp\16d10b3c-ef78-47a3-90ca-857cd4705248.csv</DataBaseFilePath>
-    <DataBaseSelection>SELECT  * from `16d10b3c-ef78-47a3-90ca-857cd4705248#csv` ;</DataBaseSelection>
+    <DataBaseFilePath>{{databasePath}}</DataBaseFilePath>
+    <DataBaseSelection>SELECT  * from `{{filename}}#csv` ;</DataBaseSelection>
     <Delimiter>,</Delimiter>
     <CharacterSet>1252</CharacterSet>
     <UserID />
