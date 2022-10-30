@@ -74,20 +74,21 @@ function LabelPrintScreen() {
                 objects,
             }
         })
-        const labels = (data?.returning || []) as SteriLabelModel[]        
+        const labels = (data?.insert_steri_label?.returning || []) as SteriLabelModel[]        
 
         if (!window.electron || !window.electron.ipcRenderer) {
             return;
         }
         window.electron.ipcRenderer.sendMessage('zs-message', [
             ZsMessageChannel.PrintLabel,
-            labels.map(label => ({
+            ...labels.map(label => ({
                 user: label.clinic_user.name,
                 contents: label.steri_item.name,
                 date: label.created_at,
                 qr: `zs/steri_label/${label.id}`
             }))
         ])
+        setToPrint({})
     }
 
     const categories = useMemo(() => {
