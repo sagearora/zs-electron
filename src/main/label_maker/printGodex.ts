@@ -9,26 +9,32 @@ async function findGoLabelExe() {
     return existsSync(golabel_path) ? golabel_path : null
 }
 
-async function findLabelFile() {
+async function findLabelFile(filename: string, dbpath: string) {
     const label_path = join(app.getAppPath(), '.webpack', 'main', 'assets', 'label.ezpx')
-    return existsSync(label_path) ? label_path : null
+    if (!existsSync(label_path)) {
+        return null;
+    }
+    const data = fs.readFileSync(label_path, 'utf-8')
+    const new_label_path = join(app.getPath('temp'), `${filename}.ezpx`)
+    fs.writeFileSync(new_label_path, data.replace('{{databasePath}}', dbpath).replace('{{filename}}', filename))
+    return new_label_path
 }
 
-async function printGodex(filepath: string): Promise<boolean> {
-    const label_path = await findLabelFile()
+async function printGodex(filename: string, dbpath: string): Promise<boolean> {
+    const label_path = await findLabelFile(filename, dbpath)
     const golabelexe_path = await findGoLabelExe()
+    console.log(`Print Params ---\nExe: ${golabelexe_path}\nLabel Path: ${label_path}\n db: ${dbpath}`)
     if (label_path === null) {
         throw new Error('Error: Label file not found.')
     }
     if (golabelexe_path === null) {
         throw new Error('Sorry GoLabel must be installed to print labels')
     }
-    console.log(`Print Params ---\nExe: ${golabelexe_path}\nLabel Path: ${label_path}\n db: ${filepath}`)
     const { stdout } = await execFileAsync(
         golabelexe_path,
         [
             '-f', `${label_path}`,
-            '-db', `${(filepath)}`
+            '-db', `${(dbpath)}`
         ])
     console.log(stdout)
     return true

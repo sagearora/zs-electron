@@ -9,11 +9,11 @@ export const handleMessage = async (
     try {
         switch (channel) {
             case ZsMessageChannel.PrintLabel:
-                const filepath = await createLabelDb(args)
+                const [filename, filepath] = await createLabelDb(args)
                 if (!filepath) {
                     return false
                 }
-                await printGodex(filepath)
+                await printGodex(filename, filepath)
                 // fs.unlinkSync(filepath)
                 return true;
         }

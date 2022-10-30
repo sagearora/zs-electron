@@ -6,9 +6,9 @@ import { v4 } from 'node-uuid';
 import { join } from "path";
 const DefaultExpiryMonths = 3
 
-const createLabelDb = async (arr: any[]): Promise<string|null> => {
+const createLabelDb = async (arr: any[]): Promise<[string|null, string|null]> => {
     if (!Array.isArray(arr)) {
-        return null
+        return [null, null]
     }
 
     const items = arr.map(item => ({
@@ -21,16 +21,17 @@ const createLabelDb = async (arr: any[]): Promise<string|null> => {
     }))
     
     console.log('print', JSON.stringify(items, null, 2))
-    const filepath = join(app.getPath("temp"), `${v4()}.csv`);
+    const filename = v4()
+    const filepath = join(app.getPath("temp"), `${filename}.csv`);
     return new Promise((r) => fs.writeFile(filepath,
         parse(items, {
             fields: ['qr', 'date', 'expiry', 'user', 'contents']
         }), function (err) {
             if (err) {
-                r(null)
+                r([null, null])
                 return
             }
-            r(filepath)
+            r([filename, filepath])
         }))
 }
 
