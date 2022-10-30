@@ -28,7 +28,7 @@ const createLabelDb = async (arr: any[]): Promise<[string|null, string|null]> =>
     const filepath = join(app.getPath("temp"), `${filename}.csv`);
     return new Promise((r) => fs.writeFile(filepath,
         parse(items, {
-            fields: ['qr', 'date', 'expiry', 'user', 'contents', 'category', 'id']
+            fields: ['qr', 'date', 'expiry', 'user', 'content_line_1', 'content_line_2', 'category', 'id']
         }), function (err) {
             if (err) {
                 r([null, null])
