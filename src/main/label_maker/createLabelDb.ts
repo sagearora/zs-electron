@@ -16,6 +16,8 @@ const createLabelDb = async (arr: any[]): Promise<[string|null, string|null]> =>
         expiry: dayjs(item.expiry).format('YYYY-DD-MM HH:mm'),
         contents: item.contents,
         user: item.user,
+        category: item.category,
+        id: item.id,
     }))
     
     console.log('print', JSON.stringify(items, null, 2))
@@ -23,7 +25,7 @@ const createLabelDb = async (arr: any[]): Promise<[string|null, string|null]> =>
     const filepath = join(app.getPath("temp"), `${filename}.csv`);
     return new Promise((r) => fs.writeFile(filepath,
         parse(items, {
-            fields: ['qr', 'date', 'expiry', 'user', 'contents']
+            fields: ['qr', 'date', 'expiry', 'user', 'contents', 'category', 'id']
         }), function (err) {
             if (err) {
                 r([null, null])

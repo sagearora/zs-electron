@@ -103,7 +103,9 @@ function LabelPrintScreen() {
                 qr: createQr({
                     type: QRType.SteriLabel,
                     id: label.id,
-                })
+                }),
+                category: label.steri_item.category,
+                id: label.id,
             }))
         ])
         setIsPrinting(false);
