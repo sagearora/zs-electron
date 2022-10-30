@@ -1,3 +1,10 @@
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const path = require('path')
+
+const copy = new CopyWebpackPlugin({
+  patterns: [{ from: path.resolve(__dirname, 'assets'), to: 'assets' }],
+})
+
 module.exports = {
   /**
    * This is the main entry point for your application, it's the first file
@@ -11,4 +18,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json']
   },
+  plugins: [
+    copy,
+  ]
 };
