@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import Loading from '../components/Loading';
 import { SteriItemFragment, SteriItemModel } from '../models/steri-item.model';
 import { SteriLabelFragment, SteriLabelModel } from '../models/steri-label.model';
+import { useDialog } from '../services/dialog.context';
 import { useUser } from '../services/user.context';
 
 export const QueryAllSteriItems = gql`
@@ -26,10 +27,12 @@ const MutationInsertLabel = gql`
 `;
 
 function LabelPrintScreen() {
+    const dialog = useDialog();
     const {
         data,
         loading,
     } = useQuery(QueryAllSteriItems)
+    const [is_printing, setIsPrinting] = useState(false);
     const [to_print, setToPrint] = useState<{ [id: number]: number }>({})
     const [insertLabel, insert_label_status] = useMutation(MutationInsertLabel)
     const { user } = useUser();
@@ -74,12 +77,13 @@ function LabelPrintScreen() {
                 objects,
             }
         })
-        const labels = (data?.insert_steri_label?.returning || []) as SteriLabelModel[]        
+        const labels = (data?.insert_steri_label?.returning || []) as SteriLabelModel[]
 
         if (!window.electron || !window.electron.ipcRenderer) {
             return;
         }
-        window.electron.ipcRenderer.sendMessage('zs-message', [
+        setIsPrinting(true);
+        const result = await window.electron.ipcRenderer.invoke('zs-message', [
             ZsMessageChannel.PrintLabel,
             ...labels.map(label => ({
                 user: label.clinic_user.name,
@@ -88,7 +92,16 @@ function LabelPrintScreen() {
                 qr: `zs/steri_label/${label.id}`
             }))
         ])
-        setToPrint({})
+        setIsPrinting(false);
+        if (result !== 1) {
+            dialog.showDialog({
+                title: 'Fail to print',
+                message: result,
+                buttons: [{
+                    children: 'Okay'
+                }]
+            })
+        }
     }
 
     const categories = useMemo(() => {
@@ -138,20 +151,27 @@ function LabelPrintScreen() {
                 </div>
             </div>
             {total_printable_items > 0 ? <div className='w-1/5 p-4 border-l-2 flex flex-col overflow-hidden'>
-                <div className='w-full pb-2'>
-                    <Button className='bg-red-200'
-                        onClick={print}
-                        loading={insert_label_status.loading}>Print <span className='font-bold'>{total_printable_items}</span> Labels</Button>
-                </div>
-                <div className='overflow-y-auto flex-1'>
-                    {items.filter(item => to_print[item.id] > 0).map(item => <button
-                        key={item.id}
-                        onClick={() => removeItem(item)}
-                        className='relative w-full my-2 p-2 bg-slate-100 block rounded-xl overflow-hidden'
-                    ><span className='absolute left-0 top-0 w-8 flex items-center justify-center
+                {is_printing ? <div className='flex flex-col justify-center flex-1 items-center'>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
+                    </svg>
+                    <h6 className='text-lg font-bold my-4'>Printing...</h6>
+                </div> : <>
+                    <div className='w-full pb-2'>
+                        <Button className='bg-red-200'
+                            onClick={print}
+                            loading={insert_label_status.loading}>Print <span className='font-bold'>{total_printable_items}</span> Labels</Button>
+                    </div>
+                    <div className='overflow-y-auto flex-1'>
+                        {items.filter(item => to_print[item.id] > 0).map(item => <button
+                            key={item.id}
+                            onClick={() => removeItem(item)}
+                            className='relative w-full my-2 p-2 bg-slate-100 block rounded-xl overflow-hidden'
+                        ><span className='absolute left-0 top-0 w-8 flex items-center justify-center
                 text-3xl font-bold h-full bg-red-500'>-</span>{item.name}<span className='absolute right-0 top-0 w-8 flex items-center justify-center
                 text-xl font-bold h-full bg-green-200'>{to_print[item.id]}</span></button>)}
-                </div>
+                    </div>
+                </>}
             </div> : null}
         </div>
     )

@@ -3,19 +3,22 @@ import printGodex from "./label_maker/printGodex"
 import { ZsMessageChannel } from "../shared/ZsMessageChannel"
 
 export const handleMessage = async (
-    event: Electron.IpcMainEvent,
+    event: Electron.IpcMainInvokeEvent,
     channel: ZsMessageChannel,
     args: unknown[]) => {
-    switch (channel) {
-        case ZsMessageChannel.PrintLabel:
-            const filepath = await createLabelDb(args)
-            if (!filepath) {
-                event.reply('fail')
-                return
-            }
-            await printGodex(filepath)
-            // fs.unlinkSync(filepath)
-            event.reply('success')
-            break
+    try {
+        switch (channel) {
+            case ZsMessageChannel.PrintLabel:
+                const filepath = await createLabelDb(args)
+                if (!filepath) {
+                    return false
+                }
+                await printGodex(filepath)
+                // fs.unlinkSync(filepath)
+                return true;
+        }
+    } catch (e) {
+        console.error(e);
+        return e.message
     }
 } 

@@ -23,19 +23,15 @@ async function printGodex(filepath: string): Promise<boolean> {
     if (golabelexe_path === null) {
         throw new Error('Sorry GoLabel must be installed to print labels')
     }
-    try {
-        console.log(`Print Params ---\nExe: ${golabelexe_path}\nLabel Path: ${label_path}\n db: ${filepath}`)
-        const { stdout } = await execFileAsync(
-            golabelexe_path,
-            [
-                '-f', `${label_path}`,
-                '-db', `${(filepath)}`
-            ])
-        console.log(stdout)
-        return true
-    } catch (error) {
-        throw error
-    }
+    console.log(`Print Params ---\nExe: ${golabelexe_path}\nLabel Path: ${label_path}\n db: ${filepath}`)
+    const { stdout } = await execFileAsync(
+        golabelexe_path,
+        [
+            '-f', `${label_path}`,
+            '-db', `${(filepath)}`
+        ])
+    console.log(stdout)
+    return true
 }
 
 export default printGodex

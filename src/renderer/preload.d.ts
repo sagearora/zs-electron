@@ -4,6 +4,7 @@ declare global {
   interface Window {
     electron: {
       ipcRenderer: {
+        invoke(channel: Channels, args: unknown[]): Promise<any>;
         sendMessage(channel: Channels, args: unknown[]): void;
         on(
           channel: Channels,

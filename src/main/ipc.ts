@@ -22,6 +22,6 @@ ipcMain.on("relaunch-app", () => {
     app.exit(0);
 });
 
-ipcMain.on('zs-message', async (event, [channel, ...arg]) => {
-    handleMessage(event, channel, arg);
+ipcMain.handle('zs-message', async (event, [channel, ...arg]) => {
+    return handleMessage(event, channel, arg);
 })

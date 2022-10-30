@@ -12,16 +12,6 @@ import { ProvideUser } from './services/user.context';
 
 
 function App() {
-  const test = () => {
-    // window.electron.ipcRenderer.sendMessage('zs-message', ['print-label', [
-    //   {
-    //     qr: 'zs/label_1',
-    //     user: 'Rebecca Leitch',
-    //     content: 'Lots of love',
-    //   }
-    // ]])
-    auth.signOut()
-  }
   return (
     <ProvideDialog>
       <ProvideApollo
