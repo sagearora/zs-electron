@@ -210,7 +210,7 @@ const initApolloClient = ({
 								return existing && Object.values(existing).reverse();
 							},
 						},
-						steri_run: {
+						steri_cycle: {
 							keyArgs: false,
 							merge(existing, incoming, { readField }) {
 								const merged = { ...existing };

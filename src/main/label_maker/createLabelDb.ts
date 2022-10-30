@@ -4,7 +4,6 @@ import fs from 'fs';
 import { parse } from 'json2csv';
 import { v4 } from 'node-uuid';
 import { join } from "path";
-const DefaultExpiryMonths = 3
 
 const createLabelDb = async (arr: any[]): Promise<[string|null, string|null]> => {
     if (!Array.isArray(arr)) {
@@ -14,8 +13,7 @@ const createLabelDb = async (arr: any[]): Promise<[string|null, string|null]> =>
     const items = arr.map(item => ({
         qr: item.qr,
         date: dayjs(item.date).format('YYYY-MM-DD HH:mm'),
-        expiry: dayjs(item.date).add(DefaultExpiryMonths, 'month')
-            .format('YYYY-DD-MM HH:mm'),
+        expiry: dayjs(item.expiry).format('YYYY-DD-MM HH:mm'),
         contents: item.contents,
         user: item.user,
     }))

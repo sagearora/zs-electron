@@ -1,12 +1,16 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
+import dayjs from 'dayjs';
 import React, { useMemo, useState } from 'react';
 import { ZsMessageChannel } from '../../shared/ZsMessageChannel';
 import Button from '../components/Button';
 import Loading from '../components/Loading';
+import { DefaultExpiryMonths, QRType } from '../constants';
 import { SteriItemFragment, SteriItemModel } from '../models/steri-item.model';
 import { SteriLabelFragment, SteriLabelModel } from '../models/steri-label.model';
+import { UserModel } from '../models/user.model';
 import { useDialog } from '../services/dialog.context';
-import { useUser } from '../services/user.context';
+import { createQr } from '../services/qr-service';
+import UserPinDialog from './UserPinDialog';
 
 export const QueryAllSteriItems = gql`
     query steri_item {
@@ -35,11 +39,11 @@ function LabelPrintScreen() {
     const [is_printing, setIsPrinting] = useState(false);
     const [to_print, setToPrint] = useState<{ [id: number]: number }>({})
     const [insertLabel, insert_label_status] = useMutation(MutationInsertLabel)
-    const { user } = useUser();
     const [selected_category, setSelectedCategory] = useState<{
         name: string;
         items: SteriItemModel[]
     }>();
+    const [show_pin, setShowPin] = useState(false);
 
     const items = (data?.steri_item || []) as SteriItemModel[];
 
@@ -57,10 +61,15 @@ function LabelPrintScreen() {
         }))
     }
 
-    const print = async () => {
+    const print = async (user: UserModel) => {
+        if (!user) {
+            return;
+        }
+        setShowPin(false)
         const objects: {
             steri_item_id: number;
             clinic_user_id: number;
+            expiry_at: string;
         }[] = [];
         items
             .filter(item => to_print[item.id] > 0)
@@ -69,6 +78,7 @@ function LabelPrintScreen() {
                     objects.push({
                         steri_item_id: item.id,
                         clinic_user_id: user.id,
+                        expiry_at: dayjs().add(DefaultExpiryMonths, 'months').toISOString(),
                     })
                 }
             })
@@ -89,7 +99,11 @@ function LabelPrintScreen() {
                 user: label.clinic_user.name,
                 contents: label.steri_item.name,
                 date: label.created_at,
-                qr: `zs/steri_label/${label.id}`
+                expiry: label.expiry_at,
+                qr: createQr({
+                    type: QRType.SteriLabel,
+                    id: label.id,
+                })
             }))
         ])
         setIsPrinting(false);
@@ -130,19 +144,24 @@ function LabelPrintScreen() {
 
     return (
         <div className='h-full flex item-stretch overflow-hidden'>
+            <UserPinDialog
+                onClose={() => setShowPin(false)}
+                setUser={print}
+                show={show_pin}
+            />
             {loading ? <Loading /> : null}
             <div className='w-1/4 border-r-2 shadow-lg p-4 overflow-y-auto'>
                 <p className='text-md font-bold mb-2'>Categories</p>
-                {Object.keys(categories).map(category => <div
+                {Object.keys(categories).map(category => <button
                     className={`p-4 w-full mb-4 rounded-xl ${selected_category?.name === category ? 'bg-green-100 hover:bg-green-200' : 'bg-slate-200 hover:bg-slate-300'}`}
                     onClick={() => setSelectedCategory(categories[category])}
-                    key={category}>{category}</div>)}
+                    key={category}>{category}</button>)}
 
             </div>
             <div className='flex-1 relative'>
                 <div className='p-4'>
                     <p className='text-md font-bold mb-2'>{selected_category?.name || 'Pick a category'}</p>
-                    {selected_category ? <div className='w-full grid grid-cols-4 gap-4 items-start'>
+                    {selected_category ? <div className='w-full grid grid-cols-3 gap-4 items-start'>
                         {selected_category.items.map(item => <button
                             key={item.id}
                             onClick={() => addItem(item)}
@@ -161,7 +180,7 @@ function LabelPrintScreen() {
                 </div> : <>
                     <div className='w-full pb-2'>
                         <Button className='bg-red-200'
-                            onClick={print}
+                            onClick={() => setShowPin(true)}
                             loading={insert_label_status.loading}>Print <span className='font-bold'>{total_printable_items}</span> Labels</Button>
                     </div>
                     <div className='overflow-y-auto flex-1'>

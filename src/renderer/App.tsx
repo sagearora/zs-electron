@@ -24,9 +24,7 @@ function App() {
       >
         <ProvideClinic
           LoadingScreen={<LoadingScreen title='Loading Clinic' />}>
-          <ProvideUser>
-            <AppRouter />
-          </ProvideUser>
+          <AppRouter />
         </ProvideClinic>
       </ProvideApollo>
     </ProvideDialog>

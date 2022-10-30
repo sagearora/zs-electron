@@ -13,9 +13,8 @@ export const handleMessage = async (
                 if (!filepath) {
                     return false
                 }
-                await printGodex(filename, filepath)
-                // fs.unlinkSync(filepath)
-                return true;
+                const result = await printGodex(filename, filepath);
+                return result
         }
     } catch (e) {
         console.error(e);

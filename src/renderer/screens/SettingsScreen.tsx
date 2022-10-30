@@ -11,7 +11,7 @@ function SettingsScreen() {
         <BackButton 
             href="/"
         />
-        <Link className='flex items-center hover:bg-slate-100 p-2 border-b-2' to='sterilizers'>
+        <Link className='flex items-center hover:bg-slate-100 p-2 border-b-2' to='steri'>
             <p className='text-sm flex-1'>
                 Manage Sterilizers
             </p>
