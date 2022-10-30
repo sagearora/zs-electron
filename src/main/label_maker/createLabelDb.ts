@@ -5,6 +5,8 @@ import { parse } from 'json2csv';
 import { v4 } from 'node-uuid';
 import { join } from "path";
 
+const MaxContentSize = 14;
+
 const createLabelDb = async (arr: any[]): Promise<[string|null, string|null]> => {
     if (!Array.isArray(arr)) {
         return [null, null]
@@ -14,7 +16,8 @@ const createLabelDb = async (arr: any[]): Promise<[string|null, string|null]> =>
         qr: item.qr,
         date: dayjs(item.date).format('YYYY-MM-DD HH:mm'),
         expiry: dayjs(item.expiry).format('YYYY-DD-MM HH:mm'),
-        contents: item.contents,
+        content_line_1: item.contents.slice(0, MaxContentSize),
+        content_line_2: item.contents.length < MaxContentSize ? '' : item.contents.slice(MaxContentSize, MaxContentSize * 2),
         user: item.user,
         category: item.category,
         id: item.id,
