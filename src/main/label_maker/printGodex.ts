@@ -20,7 +20,7 @@ async function findLabelFile(filename: string, dbpath: string) {
     return new_label_path
 }
 
-async function printGodex(filename: string, dbpath: string): Promise<boolean> {
+async function printGodex(filename: string, dbpath: string): Promise<string> {
     const label_path = await findLabelFile(filename, dbpath)
     const golabelexe_path = await findGoLabelExe()
     console.log(`Print Params ---\nExe: ${golabelexe_path}\nLabel Path: ${label_path}\n db: ${dbpath}`)
@@ -37,7 +37,7 @@ async function printGodex(filename: string, dbpath: string): Promise<boolean> {
             '-db', `${(dbpath)}`
         ])
     console.log(stdout)
-    return true
+    return 'success'
 }
 
 export default printGodex

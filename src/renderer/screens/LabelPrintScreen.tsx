@@ -93,7 +93,7 @@ function LabelPrintScreen() {
             }))
         ])
         setIsPrinting(false);
-        if (result !== 1) {
+        if (result !== 'success') {
             dialog.showDialog({
                 title: 'Fail to print',
                 message: result,
@@ -101,6 +101,8 @@ function LabelPrintScreen() {
                     children: 'Okay'
                 }]
             })
+        } else {
+            setToPrint({})
         }
     }
 
