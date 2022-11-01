@@ -41,6 +41,10 @@ function useScanner({
         document.addEventListener('keydown', onKeyDown)
         return () => document.removeEventListener('keydown', onKeyDown)
     }, [is_scanning])
+
+    return {
+        is_scanning
+    }
 }
 
 export default useScanner

@@ -1,12 +1,14 @@
 import { SteriCycleItemFragment, SteriCycleItemModel } from "./steri-cycle-item.model"
 import { UserFragment } from "./user.model"
 
+export type SteriStatus = 'loading'|'running'|'finished'|'failed'
+
 export type SteriCycleModel = {
     id: number;
     created_at: string;
     updated_at: string;
     steri_id: number;
-    status: 'loading'|'running'|'finished'|'failed'
+    status: SteriStatus;
     steri?: {
         id: number;
         name: string;
