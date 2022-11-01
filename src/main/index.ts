@@ -27,7 +27,10 @@ const createWindow = () => {
 
   // Open the DevTools.
   if (isDev) {
-  mainWindow.webContents.openDevTools();
+    // mainWindow.setFullScreen(true);
+    mainWindow.webContents.openDevTools();
+  } else {
+    mainWindow.setFullScreen(true);
   }
 };
 
