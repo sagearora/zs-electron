@@ -26,13 +26,13 @@ function useScanner({
         }
 
         //run a timeout of 200ms at the first read and clear everything
-        if (!reading) {
-            reading = true;
-            setTimeout(() => {
-                code = "";
-                reading = false;
-            }, 500);  //200 works fine for me but you can adjust it
-        }
+        // if (!reading) {
+        //     reading = true;
+        //     setTimeout(() => {
+        //         code = "";
+        //         reading = false;
+        //     }, 50);  //200 works fine for me but you can adjust it
+        // }
     }
     useEffect(() => {
         if (!is_scanning) {
