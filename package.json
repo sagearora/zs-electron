@@ -81,6 +81,7 @@
       ]
     }
   },
+  "repository": "github:sagearora/zs-electron",
   "devDependencies": {
     "@electron-forge/cli": "6.0.0-beta.52",
     "@electron-forge/maker-deb": "6.0.0-beta.52",
