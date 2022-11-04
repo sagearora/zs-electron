@@ -4,35 +4,35 @@ import { useNavigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import Loading from "../components/Loading";
 import NotFoundItem from "../components/NotFoundItem";
-import { PatientFragment, PatientModel } from "../models/patient.model";
+import { SteriItemFragment, SteriItemModel } from "../models/steri-item.model";
 import { useDialog } from "../services/dialog.context";
-import PatientForm from "./PatientForm";
+import SteriItemForm from "./SteriItemForm";
 
-function PatientEditScreen() {
+function SteriItemEditScreen() {
     const dialog = useDialog();
     const navigate = useNavigate();
-    const patient_id = useParams().patient_id
+    const item_id = useParams().item_id
     const {
         loading,
         data,
     } = useQuery(gql`
         query($id: bigint!) { 
-            patient_by_pk(id: $id) {
-                ${PatientFragment}
+            steri_item_by_pk(id: $id) {
+                ${SteriItemFragment}
             }
         }
     `, {
         variables: {
-            id: patient_id,
+            id: item_id,
         }
     })
-    const [execute, save] = useMutation(gql`
-        mutation save($id: bigint!, $set: patient_set_input!) {
-            update_patient_by_pk(
+    const [execute] = useMutation(gql`
+        mutation save($id: bigint!, $set: steri_item_set_input!) {
+            update_steri_item_by_pk(
                 pk_columns: {id: $id},
                 _set: $set,
             ) {
-                ${PatientFragment}
+                ${SteriItemFragment}
             }
         }
     `)
@@ -40,17 +40,17 @@ function PatientEditScreen() {
     if (loading) {
         return <Loading />
     }
-    const patient = data?.patient_by_pk as PatientModel;
+    const steri_item = data?.steri_item_by_pk as SteriItemModel;
 
-    if (!patient) {
-        return <NotFoundItem title="Sorry patient not found." />
+    if (!steri_item) {
+        return <NotFoundItem title='Sorry, steri item was not found' />
     }
 
     const onSave = async (v: any) => {
         try {
             await execute({
                 variables: {
-                    id: patient.id,
+                    id: steri_item.id,
                     set: v,
                 }
             })
@@ -63,17 +63,16 @@ function PatientEditScreen() {
 
 
     return <div className='my-6 max-w-screen-md mx-auto container'>
-        <BackButton href={`/patients/${patient.id}`} />
+        <BackButton href='/settings/sterilizers' />
         <div className='mt-2 mb-4'>
-            <p className='text-sm text-gray-500'>Edit Patient</p>
-            <p className='font-bold'>{patient.first_name} {patient.last_name}</p>
+            <p className='text-sm text-gray-500'>Edit Steri Item</p>
+            <p className='font-bold'>{steri_item.name}</p>
         </div>
-        <PatientForm
-            patient={patient}
-            loading={save.loading}
+        <SteriItemForm
+            steri_item={steri_item}
             onSave={onSave}
         />
     </div>
 }
 
-export default PatientEditScreen;
+export default SteriItemEditScreen;

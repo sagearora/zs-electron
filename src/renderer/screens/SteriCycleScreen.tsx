@@ -1,6 +1,6 @@
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation, useSubscription } from '@apollo/client';
 import dayjs from 'dayjs';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import BackButton from '../components/BackButton';
@@ -8,16 +8,17 @@ import Button from '../components/Button';
 import Loading from '../components/Loading';
 import NotFoundItem from '../components/NotFoundItem';
 import { QRType } from '../constants';
+import { SteriCycleItemFragment, SteriCycleItemModel } from '../models/steri-cycle-item.model';
 import { SteriCycleFragment, SteriCycleModel } from '../models/steri-cycle.model';
 import { UserModel } from '../models/user.model';
-import { useClinic } from '../services/clinic.context';
 import { useDialog } from '../services/dialog.context';
 import useScanner from '../services/use-scanner';
 import SteriController from './SteriController';
+import SteriCycleItem from './SteriCycleItem';
 import UserPinDialog from './UserPinDialog';
 
-export const QuerySteriCycleByPk = gql`
-    query steri_cycle($id: bigint!) {
+export const SubSteriCycleByPk = gql`
+    subscription steri_cycle($id: bigint!) {
         steri_cycle_by_pk(id: $id) {
             ${SteriCycleFragment}
         }
@@ -30,7 +31,7 @@ const MutationAddItem = gql`
             constraint: steri_cycle_item_pkey,
             update_columns: [deleted_at]
         }) {
-            id
+            ${SteriCycleItemFragment}
         }
     }
 `;
@@ -41,17 +42,17 @@ function SteriCycleScreen() {
     const cycle_id = useParams().cycle_id;
     const dialog = useDialog();
     const [addItem] = useMutation(MutationAddItem)
+    const [loading_steri_cycle_item, setLoadingSteriCycleItem] = useState<{ [id: number]: boolean }>({})
 
     const {
         data,
         loading,
-        refetch,
-    } = useQuery(QuerySteriCycleByPk, {
+    } = useSubscription(SubSteriCycleByPk, {
         variables: {
             id: cycle_id,
         }
     })
-
+    
     const cycle = data?.steri_cycle_by_pk as SteriCycleModel;
 
     const onScan = async (data: {
@@ -65,7 +66,7 @@ function SteriCycleScreen() {
             const { id } = data;
             // add this label to the load.
             try {
-                const r = await addItem({
+                const { data } = await addItem({
                     variables: {
                         object: {
                             steri_cycle_id: cycle.id,
@@ -75,7 +76,18 @@ function SteriCycleScreen() {
                         }
                     }
                 })
-                refetch();
+                const item = data?.insert_steri_cycle_item_one as SteriCycleItemModel;
+                if (!item) {
+                    dialog.showToast({
+                        message: `Failed to add item`, 
+                        type: 'error',
+                    });
+                    return;
+                }
+                dialog.showToast({
+                    message: `Added ${item.steri_label.steri_item.name} to cycle`,
+                    type: "success",
+                });
             } catch (e) {
                 dialog.showError(e)
             }
@@ -107,6 +119,46 @@ function SteriCycleScreen() {
         }
     `);
 
+    const [updateSteriCycleItem] = useMutation(gql`
+        mutation update_steri_cycle_item(
+            $steri_label_id: bigint!,
+            $steri_cycle_id: bigint!,
+            $set: steri_cycle_item_set_input!) {
+                update_steri_cycle_item_by_pk(pk_columns: {
+                    steri_label_id: $steri_label_id,
+                    steri_cycle_id: $steri_cycle_id
+                }, _set: $set) {
+                    ${SteriCycleItemFragment}
+                }
+        }
+    `)
+
+    const removeSteriCycleItem = async (
+        steri_label_id: number
+    ) => {
+        setLoadingSteriCycleItem(l => ({
+            ...l,
+            [steri_label_id]: true,
+        }))
+        try {
+            await updateSteriCycleItem({
+                variables: {
+                    steri_label_id,
+                    steri_cycle_id: cycle_id,
+                    set: {
+                        deleted_at: 'now()'
+                    }
+                }
+            })
+        } catch (e) {
+            dialog.showError(e)
+        } finally {
+            setLoadingSteriCycleItem(l => ({
+                ...l,
+                [steri_label_id]: false,
+            }))
+        }
+    }
     const updateCycle = async (v: any) => {
         try {
             await executeMutation({
@@ -189,15 +241,13 @@ function SteriCycleScreen() {
                 {(cycle.steri_cycle_items || []).length > 0 && <p className='text-lg font-bold'>Content</p>}
                 <div className='grid grid-cols-2 gap-4'>
                     {
-                        (cycle.steri_cycle_items || []).map((item) => <div
-                            key={item.id}
-                            className='bg-slate-200 rounded-xl p-2'>
-                            <p className='text-sm'>#{item.steri_label.id} - {item.steri_label.steri_item.category}</p>
-                            <p className='text-lg font-bold'>{item.steri_label.steri_item.name}</p>
-                            <p className='text-sm font-semibold'>{item.steri_label.clinic_user.name}</p>
-                            <p className='text-sm'>Date: {dayjs(item.steri_label.created_at).format('YYYY-MM-DD HH:mm')}</p>
-                            <p className='text-sm'>Exp: {dayjs(item.steri_label.expiry_at).format('YYYY-MM-DD HH:mm')}</p>
-                        </div>)
+                        (cycle.steri_cycle_items || []).map((item) =>
+                            <SteriCycleItem
+                                key={item.id}
+                                item={item}
+                                remove={() => removeSteriCycleItem(item.steri_label_id)}
+                                loading={loading_steri_cycle_item[item.steri_label_id]}
+                            />)
                     }
                 </div>
             </div>

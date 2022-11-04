@@ -1,6 +1,7 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
 import dayjs from 'dayjs';
 import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ZsMessageChannel } from '../../shared/ZsMessageChannel';
 import Button from '../components/Button';
 import Loading from '../components/Loading';
@@ -8,17 +9,11 @@ import { DefaultExpiryMonths, QRType } from '../constants';
 import { SteriItemFragment, SteriItemModel } from '../models/steri-item.model';
 import { SteriLabelFragment, SteriLabelModel } from '../models/steri-label.model';
 import { UserModel } from '../models/user.model';
+import { QueryAllSteriItems } from '../queries';
 import { useDialog } from '../services/dialog.context';
 import { createQr } from '../services/qr-service';
 import UserPinDialog from './UserPinDialog';
 
-export const QueryAllSteriItems = gql`
-    query steri_item {
-        steri_item {
-            ${SteriItemFragment}
-        }
-    }
-`;
 
 const MutationInsertLabel = gql`
     mutation insert_label($objects: [steri_label_insert_input!]!) {
@@ -35,7 +30,7 @@ function LabelPrintScreen() {
     const {
         data,
         loading,
-    } = useQuery(QueryAllSteriItems)
+    } = useQuery(QueryAllSteriItems())
     const [is_printing, setIsPrinting] = useState(false);
     const [to_print, setToPrint] = useState<{ [id: number]: number }>({})
     const [insertLabel, insert_label_status] = useMutation(MutationInsertLabel)
@@ -125,10 +120,10 @@ function LabelPrintScreen() {
     const categories = useMemo(() => {
         return items.reduce((all, item) => ({
             ...all,
-            [item.category]: {
+            [item.category.toLowerCase()]: {
                 name: item.category,
-                items: all[item.category] ? [
-                    ...all[item.category].items,
+                items: all[item.category.toLowerCase()] ? [
+                    ...all[item.category.toLowerCase()].items,
                     item,
                 ] : [item],
             }
@@ -158,6 +153,9 @@ function LabelPrintScreen() {
                     className={`p-4 w-full mb-4 rounded-xl ${selected_category?.name === category ? 'bg-green-100 hover:bg-green-200' : 'bg-slate-200 hover:bg-slate-300'}`}
                     onClick={() => setSelectedCategory(categories[category])}
                     key={category}>{category}</button>)}
+                <Link to='/settings/steri-items'>
+                    <div className='text-blue-800 py-2 text-center'>Edit Items</div>
+                </Link>
 
             </div>
             <div className='flex-1 relative'>

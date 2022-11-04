@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { UserModel } from "../models/user.model";
-import NoUserRouter from "../screens/NoUserRouter";
+import NoUserScreen from "../screens/NoUserScreen";
+import { useDialog } from "./dialog.context";
 
 const UserContext = createContext<{
     user: UserModel
@@ -8,22 +9,42 @@ const UserContext = createContext<{
 }>({} as any);
 
 export type ProvideUserProps = {
-    children?: React.ReactNode
+    children?: React.ReactNode;
+    adminRequired?: boolean;
 }
 
 export const ProvideUser = ({
     children,    
+    adminRequired,
 }: ProvideUserProps) => {
     const saved_user = localStorage.getItem('user')
-    const [user, _setUser] = useState<UserModel|undefined>(saved_user ? JSON.parse(saved_user) : undefined);
+    const dialog = useDialog();
+    const [user, _setUser] = useState<UserModel|undefined>();
+
+    useEffect(() => {
+        const saved = saved_user ? JSON.parse(saved_user) as UserModel : undefined
+        if (!saved) {
+            return
+        }
+        _setUser(!adminRequired || saved.is_admin ? saved : undefined)
+    }, [adminRequired])
 
     const setUser = (user?: UserModel) => {
+        if (!!user && adminRequired && !user.is_admin) {
+            dialog.showDialog({
+                title: 'Not Authorized',
+                message: 'Sorry, only an admin can access this page.',
+                buttons: [{children: 'Okay'}],
+            })
+            localStorage.setItem('user', null)
+            return;
+        } 
         _setUser(user);
         localStorage.setItem('user', user ? JSON.stringify(user) : null)
     }
 
     if (!user) {
-        return <NoUserRouter setUser={setUser} />
+        return <NoUserScreen setUser={setUser} />
     }
 
     return <UserContext.Provider value={{

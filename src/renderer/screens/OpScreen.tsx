@@ -74,7 +74,7 @@ function OpScreen() {
                         <div className='flex items-center bg-green-100 rounded-xl px-4 py-2'>
                             <div className='flex-1'>
                                 <p className='text-sm text-gray-500'>Current Patient</p>
-                                <p className='text-lg font-bold'>{op.patient.name}</p>
+                                <p className='text-lg font-bold'>{op.patient.first_name} {op.patient.last_name}</p>
                             </div>
                             <div>
                                 <Button

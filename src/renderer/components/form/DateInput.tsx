@@ -13,6 +13,7 @@ function DateInput({
     control,
     name,
     ref,
+    label,
     disablePadding,
     ...props
 }: DateInputProps) {
@@ -26,10 +27,21 @@ function DateInput({
     return (
         <div className={[
             disablePadding ? '' : 'mb-4',
-            'w-full grid grid-cols-3 gap-4'
+            'w-full'
         ].join(' ')}>
+            {label ? <label
+                htmlFor={label}
+                className={[
+                    "block text-sm font-bold mb-2",
+                    fieldState.error ? 'text-red-500' : 'text-gray-700'
+                ].join(' ')}>
+                {label}
+            </label> : null}
             <DatePicker
-            format='yyyy/MM/dd' onChange={field.onChange} value={field.value} />
+                format='yyyy/MM/dd'
+                onChange={field.onChange}
+                value={field.value} />
+            {fieldState.error && <p className="text-red-500 text-xs italic mt-2">{fieldState.error.message}</p>}
         </div>
     )
 }

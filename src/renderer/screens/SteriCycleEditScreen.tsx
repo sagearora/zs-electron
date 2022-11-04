@@ -6,9 +6,14 @@ import Loading from '../components/Loading';
 import { SteriCycleFragment, SteriCycleModel } from '../models/steri-cycle.model';
 import { useDialog } from '../services/dialog.context';
 import SteriCycleForm from './SteriCycleForm';
-import { QuerySteriCycleByPk } from './SteriCycleScreen';
 
-
+const QuerySteriCycleByPk = gql`
+    query steri_cycle($id: bigint!) {
+        steri_cycle_by_pk(id: $id) {
+            ${SteriCycleFragment}
+        }
+    }
+`;
 
 function SteriCycleEditScreen() {
     const dialog = useDialog();

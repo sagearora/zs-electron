@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Button from '../components/Button';
 import { LargeInt, PageLimit } from '../constants';
 import { SteriCycleFragment, SteriCycleModel } from '../models/steri-cycle.model';
-import { SteriCycleItem } from './SteriCycleItem';
+import { SteriCycleListItem } from './SteriCycleListItem';
 
 export const QuerySteriCycleList = gql`
 query list_steri_cycle($cursor: bigint!, $limit: Int!) { 
@@ -52,7 +52,7 @@ function SteriCycleListScreen() {
                 <div className='flex-1' />
                 <Link to='/cycles/create'>+ Start a Cycle</Link>
             </div>
-            {cycles.map(cycle => <SteriCycleItem
+            {cycles.map(cycle => <SteriCycleListItem
                 cycle={cycle}
                 key={cycle.id}
             />)}

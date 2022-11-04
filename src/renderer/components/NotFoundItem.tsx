@@ -5,12 +5,14 @@ export type NotFoundItemProps = {
     title: string;
     description?: string;
     back?: () => void;
+    noBack?: boolean;
 }
 
 function NotFoundItem({
     title,
     description,
     back,
+    noBack,
 }: NotFoundItemProps) {
     return (
         <div className='my-6 max-w-screen-md mx-auto container flex flex-col items-center'>
@@ -19,7 +21,7 @@ function NotFoundItem({
             </svg>
             <h1 className='text-center mb-2 font-bold text-lg'>{title}</h1>
             <h1 className='text-center mb-2 text-md'>{description}</h1>
-            <Button onClick={() => back ? back() : history.back()}>Go Back</Button>
+            {!noBack && <Button onClick={() => back ? back() : history.back()}>Go Back</Button>}
         </div>
     )
 }

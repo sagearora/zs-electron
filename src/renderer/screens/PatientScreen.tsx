@@ -1,14 +1,14 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import Loading from "../components/Loading";
 import NotFoundItem from "../components/NotFoundItem";
 import { PatientFragment, PatientModel } from "../models/patient.model";
 import { useDialog } from "../services/dialog.context";
-import PatientForm from "./PatientForm";
+import PatientSteriHistory from "./PatientSteriHistory";
 
-function PatientEditScreen() {
+function PatientScreen() {
     const dialog = useDialog();
     const navigate = useNavigate();
     const patient_id = useParams().patient_id
@@ -55,7 +55,7 @@ function PatientEditScreen() {
                 }
             })
             navigate('..')
-        } catch(e) {
+        } catch (e) {
             dialog.showError(e);
         }
     }
@@ -63,17 +63,20 @@ function PatientEditScreen() {
 
 
     return <div className='my-6 max-w-screen-md mx-auto container'>
-        <BackButton href={`/patients/${patient.id}`} />
-        <div className='mt-2 mb-4'>
-            <p className='text-sm text-gray-500'>Edit Patient</p>
-            <p className='font-bold'>{patient.first_name} {patient.last_name}</p>
+        <BackButton href='/settings/sterilizers' />
+        <div className='mt-2 mb-4 flex items-start border-b-2 pb-4'>
+            <div className='flex-1'>
+                <p className='text-sm text-gray-500'>Patient</p>
+                <p className='font-bold'>{patient.first_name} {patient.last_name}</p>
+            </div>
+            <Link to='edit'>Edit</Link>
         </div>
-        <PatientForm
-            patient={patient}
-            loading={save.loading}
-            onSave={onSave}
+
+        <PatientSteriHistory
+            patient_id={patient.id}
         />
+
     </div>
 }
 
-export default PatientEditScreen;
+export default PatientScreen;

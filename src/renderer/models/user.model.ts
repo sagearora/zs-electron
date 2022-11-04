@@ -5,6 +5,7 @@ export type UserModel = {
     name: string;
     pin: number;
     clinic_id: number;
+    is_admin?: boolean;
 }
 
 export const UserFragment = `
@@ -14,4 +15,5 @@ export const UserFragment = `
     name
     pin
     clinic_id
+    is_admin
 `;

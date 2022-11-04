@@ -1,11 +1,12 @@
 import { gql, useQuery } from "@apollo/client";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import Button from "../components/Button";
 import { LargeInt, PageLimit } from "../constants";
 import { PatientFragment, PatientModel } from "../models/patient.model";
 import { SteriModel } from "../models/steri.model";
+import { PatientSearch } from "./PatientSearch";
 
 export const QueryPatientList = gql`
 query list_patient($cursor: bigint!, $limit: Int!) { 
@@ -18,6 +19,7 @@ query list_patient($cursor: bigint!, $limit: Int!) {
 `
 
 function PatientListScreen() {
+    const navigate = useNavigate();
     const [has_more, setHasMore] = useState(true);
     const {
         loading,
@@ -55,13 +57,16 @@ function PatientListScreen() {
                 to='create'
             >+ Add Patient</Link>
         </div>
+        <PatientSearch 
+            onSelect={p => navigate(`/patients/${p.id}`)}
+        />
         {patients.map(patient => <Link
             className="flex items-center border-b-2 p-2 hover:bg-slate-200"
-            to={`${patient.id}/edit`}
+            to={`${patient.id}`}
             key={patient.id}
         >
             <div className='flex-1'>
-                <p className={`text-md ${patient.archived_at ? 'line-through text-gray-700' : ''}`}>{patient.name}</p>
+                <p className={`text-md ${patient.archived_at ? 'line-through text-gray-700' : ''}`}>{patient.first_name} {patient.last_name}</p>
                 <p className={`text-sm ${patient.archived_at ? 'line-through text-gray-700' : ''}`}>{patient.dob}</p>
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

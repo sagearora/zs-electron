@@ -11,9 +11,6 @@ export type NoUserScreenProps = {
 function NoUserScreen({
     setUser,
 }: NoUserScreenProps) {
-    const {
-        clinic,
-    } = useClinic()
     const [error, setError] = useState('');
     const [query] = useLazyQuery(gql`
     query get_user_by_pin($pin: smallint!) {
@@ -26,14 +23,12 @@ function NoUserScreen({
 
     const onTestPin = async (pin: string) => {
         setError('');
-        console.log(pin);
         const result = await query({
             variables: {
                 pin: +pin,
             }
         });
         const user = (result?.data?.clinic_user || [])[0] as UserModel;
-        console.log(result);
         if (!user) {
             setError('Wrong Pin');
         }

@@ -11,7 +11,8 @@ import { PatientModel } from '../models/patient.model'
 export type PatientFormProps = {
     patient?: PatientModel;
     onSave: (v: {
-        name: string;
+        first_name: string;
+        last_name: string;
         dob: string;
         archived_at: string | null;
     }) => Promise<void>;
@@ -19,12 +20,14 @@ export type PatientFormProps = {
 }
 
 const schema = yup.object({
-    name: yup.string().required('Please enter a name'),
+    first_name: yup.string().required('Please enter a first name'),
+    last_name: yup.string().required('Please enter a last name'),
     dob: yup.date().required('Please enter a date of birth'),
 }).required();
 
 type PatientFields = {
-    name: string;
+    first_name: string;
+    last_name: string;
     dob: Date;
     is_active: boolean;
 }
@@ -37,7 +40,8 @@ function PatientForm({
     const { control, handleSubmit } = useForm<PatientFields>({
         resolver: yupResolver(schema),
         defaultValues: {
-            name: patient?.name || '',
+            first_name: patient?.first_name || '',
+            last_name: patient?.last_name || '',
             dob: patient ? new Date(`${patient.dob}T00:00:00`) : undefined,
             is_active: !patient?.archived_at,
         }
@@ -45,7 +49,8 @@ function PatientForm({
 
     const onSubmit: SubmitHandler<PatientFields> = async (data) => {
         return onSave({
-            name: data.name,
+            first_name: data.first_name,
+            last_name: data.last_name,
             dob: data.dob.toDateString(),
             archived_at: data.is_active ? null : (patient?.archived_at || 'now()'),
         })
@@ -53,11 +58,18 @@ function PatientForm({
 
     return (
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
-            <TextInput
-                label='Patient name'
-                control={control}
-                name='name'
-            />
+            <div className='grid grid-cols-2 gap-2'>
+                <TextInput
+                    label='First name'
+                    control={control}
+                    name='first_name'
+                />
+                <TextInput
+                    label='Last name'
+                    control={control}
+                    name='last_name'
+                />
+            </div>
             <DateInput
                 label='Date of birth'
                 control={control}

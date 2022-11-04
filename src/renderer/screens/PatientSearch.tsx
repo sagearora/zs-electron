@@ -9,7 +9,10 @@ export type PatientSearchProps = {
 
 const QuerySearchPatients = gql`
 query search_patients($query: citext!) {
-    patient(where: {name: {_ilike: $query}}) {
+    patient(where: {_or: [
+        {first_name: {_ilike: $query}},
+        {last_name: {_ilike: $query}}
+    ]}) {
         ${PatientFragment}
     }
 }`
@@ -39,13 +42,6 @@ export const PatientSearch = ({
     }, [debounced_text])
 
     const patients = (search_result.data?.patient || []) as PatientModel[]
-
-    const select = (v: { value: number | string }) => {
-        const t = patients.find(t => t.id === v.value);
-        if (t) {
-            onSelect(t);
-        }
-    }
 
     const clear = () => {
         setText('');
@@ -83,12 +79,9 @@ export const PatientSearch = ({
             {patients.map(patient => <button
                 className='block w-full px-4 py-2 hover:bg-slate-200 border-b-2'
                 key={patient.id} onClick={() => onSelect(patient)}>
-                    {patient.name} - {patient.dob}
+                    {patient.first_name} {patient.last_name} - {patient.dob}
             </button>)}
         </div> : null}
     </div>
 }
 
-function setResults(arg0: undefined[]) {
-    throw new Error('Function not implemented.');
-}

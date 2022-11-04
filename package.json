@@ -65,6 +65,18 @@
             }
           }
         ]
+      ],
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "sagearora",
+              "name": "zs-electron"
+            },
+            "prerelease": true
+          }
+        }
       ]
     }
   },
