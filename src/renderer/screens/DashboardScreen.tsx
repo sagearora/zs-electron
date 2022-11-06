@@ -54,7 +54,7 @@ function DashboardScreen() {
 
   return (
     <div className='my-6 max-w-screen-md mx-auto container'>
-      <div className='grid grid-cols-4 gap-6'>
+      <div className='grid grid-cols-4 gap-2'>
         {links.map(link => <Link key={link.link} to={link.link}>
           <div className='bg-slate-200 block w-full h-full py-8 text-center rounded-xl flex flex-col items-center justify-center'>
             {link.icon}

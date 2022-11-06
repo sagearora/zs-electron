@@ -39,7 +39,7 @@ function SteriLabel({
     }, [item.steri_cycle])
 
     return (
-        <div className={`bg-slate-100 rounded-xl p-2 relative overflow-hidden ${color}`}>
+        <div className={`rounded-xl p-2 relative overflow-hidden ${color}`}>
             {loading && <div className='absolute left-0 top-0 w-full h-full z-10 bg-white/50 flex items-center justify-center'>
                 <Loading />
             </div>}
