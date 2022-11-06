@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import BackButton from "../components/BackButton";
+import BackButton from "../lib/BackButton";
 import { SteriItemModel } from "../models/steri-item.model";
 import { QueryAllSteriItems } from "../queries";
 

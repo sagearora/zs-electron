@@ -1,14 +1,13 @@
-import { useQuery, gql, useSubscription, useMutation } from '@apollo/client'
+import { gql, useMutation, useSubscription } from '@apollo/client'
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import BackButton from '../components/BackButton'
-import Button from '../components/Button'
-import Loading from '../components/Loading'
-import NotFoundItem from '../components/NotFoundItem'
+import BackButton from '../lib/BackButton'
+import Button from '../lib/Button'
+import Loading from '../lib/Loading'
+import NotFoundItem from '../lib/NotFoundItem'
 import { OpFragment, OpModel } from '../models/op.model'
 import { PatientModel } from '../models/patient.model'
-import { useDialog } from '../services/dialog.context'
-import OpLabelScanner from './OpLabelScanner'
+import { useDialog } from '../lib/dialog.context'
 import { PatientSearch } from './PatientSearch'
 
 function OpScreen() {
@@ -82,7 +81,6 @@ function OpScreen() {
                                     onClick={() => addPatient()}>Clear</Button>
                             </div>
                         </div>
-                        <OpLabelScanner patient_id={op.patient.id} op_id={op.id} />
                     </div>
                     : <div>
                         <p className='text-sm text-gray-500 mb-2'>Select patient for room</p>

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import ModalDialog, { DialogProps } from "../components/ModalDialog";
+import ModalDialog, { DialogProps } from "./ModalDialog";
 import { parseServerError } from "./parse-server-error";
 
 export type ProvideDialogProps = {
@@ -16,6 +16,7 @@ const AutoCloseDuration = 5000;
 
 const DialogContext = createContext<{
     showDialog: (_: DialogProps) => void;
+    showSimpleDialog: (title: string, message: string) => void;
     showError: (error: any) => void;
     showToast: (toast: Toast) => void;
 }>({} as any);
@@ -23,12 +24,23 @@ const DialogContext = createContext<{
 export const ProvideDialog = ({
     children,
 }: ProvideDialogProps) => {
-    const [open, setOpen] = useState<DialogProps | false>(false)
+    const [open, setOpen] = useState<DialogProps | undefined>()
     const [toast, setToast] = useState<Toast | undefined>();
     const [, setToastTimeout] = useState<NodeJS.Timeout>();
 
     const showDialog = (dialog: DialogProps) => {
         setOpen(dialog);
+    }
+
+    const showSimpleDialog = (title: string, message: string) => {
+        setOpen({
+            message,
+            title,
+            buttons: [{
+                children: 'Okay',
+                onClick: () => setOpen(undefined)
+            }]
+        });
     }
 
     const showError = (error: any) => {
@@ -55,13 +67,15 @@ export const ProvideDialog = ({
 
     return <DialogContext.Provider value={{
         showDialog,
+        showSimpleDialog,
         showError,
         showToast,
     }}>
-        {open ? <ModalDialog
+        <ModalDialog
+            show={!!open}
             dialog={open}
-            onClose={() => setOpen(false)}
-        /> : null}
+            onClose={() => setOpen(undefined)}
+        />
         {toast && <div className="fixed p-2 bottom-0 left-0 w-full z-99">
             <div className="max-w-lg relative mx-auto bg-slate-100 border-2 flex items-center p-4 shadow-lg rounded-lg overflow-hidden">
                 <div className={`absolute top-0 left-0 w-full h-1 ${!toast.type && 'bg-slate-600'} ${toast.type === 'error' && 'bg-red-500'} ${toast.type === 'success' && 'bg-green-500'}`} />

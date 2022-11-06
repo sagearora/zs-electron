@@ -2,10 +2,10 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from "yup"
-import Button from '../components/Button'
-import DateInput from '../components/form/DateInput'
-import SwitchInput from '../components/form/SwitchInput'
-import TextInput from '../components/form/TextInput'
+import Button from '../lib/Button'
+import DateInput from '../lib/form/DateInput'
+import SwitchInput from '../lib/form/SwitchInput'
+import TextInput from '../lib/form/TextInput'
 import { PatientModel } from '../models/patient.model'
 
 export type PatientFormProps = {

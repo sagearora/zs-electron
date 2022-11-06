@@ -51,7 +51,7 @@ jobs:
             out/**/*.deb
             out/**/*.dmg
             out/**/*Setup*
-            out/**/*Setup*.exe
+            out/**/*.exe
             out/**/*.nupkg
             out/**/*.rpm
             out/**/*.zip

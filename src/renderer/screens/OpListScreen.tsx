@@ -1,8 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import BackButton from "../components/BackButton";
-import Button from "../components/Button";
+import BackButton from "../lib/BackButton";
+import Button from "../lib/Button";
 import { LargeInt, PageLimit } from "../constants";
 import { OpFragment, OpModel } from "../models/op.model";
 
@@ -47,7 +47,7 @@ function OpListScreen() {
 
     return <div className='my-6 max-w-screen-md mx-auto container'>
         <div className='flex items-center mb-4'>
-            <BackButton href='/' />
+            <BackButton href='/settings' />
             <p className='ml-2 font-bold text-gray-500'>Operatories</p>
             <div className='flex-1' />
             <Link
@@ -56,7 +56,7 @@ function OpListScreen() {
         </div>
         {ops.map(op => <Link
             className="flex items-center border-b-2 p-2 hover:bg-slate-200"
-            to={`${op.id}`}
+            to={`${op.id}/edit`}
             key={op.id}
         >
             <div className='flex-1'>

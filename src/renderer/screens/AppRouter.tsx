@@ -1,5 +1,7 @@
 import React from 'react'
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
+import CheckedOut from './CheckedOut'
+import CheckoutScreen from './CheckoutScreen/CheckoutScreen'
 import DashboardScreen from './DashboardScreen'
 import LabelPrintScreen from './LabelPrintScreen'
 import Layout from './Layout'
@@ -37,12 +39,7 @@ function AppRouter() {
                     </Route>
                     <Route path='/printlabels' element={<LabelPrintScreen />} />
                     <Route path='/logs' element={<LabelPrintScreen />} />
-                    <Route path='/ops'>
-                        <Route path='create' element={<OpCreateScreen />} />
-                        <Route path=':op_id' element={<OpScreen />} />
-                        <Route path=':op_id/edit' element={<OpEditScreen />} />
-                        <Route index element={<OpListScreen />} />
-                    </Route>
+                    <Route path='/checkout' element={<CheckoutScreen />} />
                     <Route path='/patients'>
                         <Route path='create' element={<PatientCreateScreen />} />
                         <Route path=':patient_id' element={<PatientScreen />} />
@@ -60,6 +57,11 @@ function AppRouter() {
                             <Route path='create' element={<UserCreateScreen />} />
                             <Route path=':user_id/edit' element={<UserEditScreen />} />
                             <Route index element={<UserListScreen />} />
+                        </Route>
+                        <Route path='ops'>
+                            <Route path='create' element={<OpCreateScreen />} />
+                            <Route path=':op_id/edit' element={<OpEditScreen />} />
+                            <Route index element={<OpListScreen />} />
                         </Route>
                         <Route path='steri'>
                             <Route path='create' element={<SteriCreateScreen />} />

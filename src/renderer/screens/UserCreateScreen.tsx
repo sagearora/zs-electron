@@ -1,10 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import BackButton from "../components/BackButton";
+import BackButton from "../lib/BackButton";
 import { UserFragment } from "../models/user.model";
 import { useClinic } from "../services/clinic.context";
-import { useDialog } from "../services/dialog.context";
+import { useDialog } from "../lib/dialog.context";
 import UserForm from "./UserForm";
 import { QueryUserList } from "./UserListScreen";
 

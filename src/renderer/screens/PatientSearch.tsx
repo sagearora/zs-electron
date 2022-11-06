@@ -1,7 +1,7 @@
 import { gql, useLazyQuery } from '@apollo/client';
 import React, { useEffect, useRef, useState } from 'react';
 import { PatientFragment, PatientModel } from '../models/patient.model';
-import { useDebounce } from '../services/use-debounce';
+import { useDebounce } from '../lib/use-debounce';
 
 export type PatientSearchProps = {
     onSelect: (patient: PatientModel) => void;
@@ -50,6 +50,11 @@ export const PatientSearch = ({
         }
     }
 
+    const _onSelect = (p: PatientModel) => {
+        clear();
+        onSelect(p)
+    }
+
     return <div className='relative w-full'>
         <div className='relative'>
             <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
@@ -75,10 +80,10 @@ export const PatientSearch = ({
             </button> : null}
 
         </div>
-        {!!debounced_text ? <div className='absolute w-full mt-4 z-50 bg-white shadow-lg rounded-lg overflow-hidden'>
+        {!!debounced_text ? <div className='absolute w-full mt-1 z-50 bg-white shadow-lg rounded-lg overflow-hidden'>
             {patients.map(patient => <button
                 className='block w-full px-4 py-2 hover:bg-slate-200 border-b-2'
-                key={patient.id} onClick={() => onSelect(patient)}>
+                key={patient.id} onClick={() => _onSelect(patient)}>
                     {patient.first_name} {patient.last_name} - {patient.dob}
             </button>)}
         </div> : null}

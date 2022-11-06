@@ -1,7 +1,7 @@
 import { Switch } from '@headlessui/react';
 import dayjs from 'dayjs';
 import React, { useState } from 'react';
-import Button from '../components/Button';
+import Button from '../lib/Button';
 import { SteriStatus } from '../models/steri-cycle.model';
 import { UserModel } from '../models/user.model';
 

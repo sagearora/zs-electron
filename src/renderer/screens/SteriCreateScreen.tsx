@@ -1,10 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import BackButton from "../components/BackButton";
+import BackButton from "../lib/BackButton";
 import { SteriFragment } from "../models/steri.model";
 import { useClinic } from "../services/clinic.context";
-import { useDialog } from "../services/dialog.context";
+import { useDialog } from "../lib/dialog.context";
 import SteriForm from "./SteriForm";
 import { QuerySteriList } from "./SteriListScreen";
 

@@ -23,7 +23,6 @@ const createLabelDb = async (arr: any[]): Promise<[string|null, string|null]> =>
         id: item.id,
     }))
     
-    console.log('print', JSON.stringify(items, null, 2))
     const filename = v4()
     const filepath = join(app.getPath("temp"), `${filename}.csv`);
     return new Promise((r) => fs.writeFile(filepath,

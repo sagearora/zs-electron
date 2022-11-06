@@ -1,13 +1,13 @@
 import { gql, useMutation } from "@apollo/client";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import BackButton from "../components/BackButton";
+import BackButton from "../lib/BackButton";
 import { LargeInt, PageLimit } from "../constants";
 import { OpFragment } from "../models/op.model";
+import { QueryOpList } from "../queries";
 import { useClinic } from "../services/clinic.context";
-import { useDialog } from "../services/dialog.context";
+import { useDialog } from "../lib/dialog.context";
 import OpForm from "./OpForm";
-import { QueryOpList } from "./OpListScreen";
 
 function OpCreateScreen() {
     const { clinic } = useClinic();
@@ -23,7 +23,7 @@ function OpCreateScreen() {
         }
     `, {
         refetchQueries: [{
-            query: QueryOpList,
+            query: QueryOpList(),
             variables: {
                 cursor: LargeInt,
                 limit: PageLimit,
@@ -51,7 +51,7 @@ function OpCreateScreen() {
 
     return <div className='my-6 max-w-screen-md mx-auto container'>
         <div className='mb-4 flex items-center'>
-            <BackButton href='/ops' />
+            <BackButton href='/settings/ops' />
             <p className='ml-2 font-bold'>Create Op</p>
         </div>
         <OpForm

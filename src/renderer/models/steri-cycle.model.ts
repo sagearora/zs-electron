@@ -1,4 +1,4 @@
-import { SteriCycleItemFragment, SteriCycleItemModel } from "./steri-cycle-item.model"
+import { SteriLabelFragment, SteriLabelModel } from "./steri-label.model"
 import { UserFragment } from "./user.model"
 
 export type SteriStatus = 'loading'|'running'|'finished'|'failed'
@@ -30,7 +30,7 @@ export type SteriCycleModel = {
     start_at?: string;
     finish_at?: string;
     notes?: string;
-    steri_cycle_items?: SteriCycleItemModel[]
+    steri_labels?: SteriLabelModel[]
 }
 
 export const SteriCycleFragment = `
@@ -54,7 +54,7 @@ export const SteriCycleFragment = `
     }
     finish_at
     notes
-    steri_cycle_items(order_by: {id: desc}) {
-        ${SteriCycleItemFragment}
+    steri_labels(order_by: {id: desc}) {
+        ${SteriLabelFragment}
     }
 `

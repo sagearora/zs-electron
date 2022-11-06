@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Button from '../components/Button';
+import Button from '../lib/Button';
 import { LargeInt, PageLimit } from '../constants';
 import { SteriCycleFragment, SteriCycleModel } from '../models/steri-cycle.model';
 import { SteriCycleListItem } from './SteriCycleListItem';

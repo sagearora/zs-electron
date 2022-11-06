@@ -1,20 +1,21 @@
-import { gql, useMutation, useSubscription } from '@apollo/client';
+import { gql, useApolloClient, useMutation, useSubscription } from '@apollo/client';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
-import BackButton from '../components/BackButton';
-import Button from '../components/Button';
-import Loading from '../components/Loading';
-import NotFoundItem from '../components/NotFoundItem';
+import SteriLabel from '../components/SteriLabel';
 import { QRType } from '../constants';
-import { SteriCycleItemFragment, SteriCycleItemModel } from '../models/steri-cycle-item.model';
+import BackButton from '../lib/BackButton';
+import Button from '../lib/Button';
+import { useDialog } from '../lib/dialog.context';
+import Loading from '../lib/Loading';
+import NotFoundItem from '../lib/NotFoundItem';
 import { SteriCycleFragment, SteriCycleModel } from '../models/steri-cycle.model';
+import { SteriItemFragment } from '../models/steri-item.model';
+import { SteriLabelFragment, SteriLabelModel } from '../models/steri-label.model';
 import { UserModel } from '../models/user.model';
-import { useDialog } from '../services/dialog.context';
 import useScanner from '../services/use-scanner';
 import SteriController from './SteriController';
-import SteriCycleItem from './SteriCycleItem';
 import UserPinDialog from './UserPinDialog';
 
 export const SubSteriCycleByPk = gql`
@@ -26,23 +27,38 @@ export const SubSteriCycleByPk = gql`
 `;
 
 const MutationAddItem = gql`
-    mutation insert_item($object: steri_cycle_item_insert_input!) {
-        insert_steri_cycle_item_one(object: $object, on_conflict: {
-            constraint: steri_cycle_item_pkey,
-            update_columns: [deleted_at]
-        }) {
-            ${SteriCycleItemFragment}
+    mutation update_steri_label($id: bigint!, $steri_item_id: bigint!, $inc_by: Int!, $set: steri_label_set_input!) {
+        update_steri_label_by_pk(pk_columns: {id: $id}, _set: $set) {
+            ${SteriLabelFragment}
+        }
+        update_steri_item_by_pk(
+            pk_columns: {id: $steri_item_id}, 
+            _inc: {total_checked_out: $inc_by}
+        ) {
+            ${SteriItemFragment}
         }
     }
 `;
+
+const MutationUpdateSteriCycle = gql`
+mutation update_steri_cycle($id: bigint!, $set: steri_cycle_set_input!) {
+    update_steri_cycle_by_pk(
+        pk_columns: {
+            id: $id
+        }, _set: $set) {
+        ${SteriCycleFragment}
+    }
+}
+`
 
 function SteriCycleScreen() {
     const [user, setUser] = useState<UserModel | undefined>();
     const [show_pin, setShowPin] = useState<boolean | Function>(false);
     const cycle_id = useParams().cycle_id;
     const dialog = useDialog();
-    const [addItem] = useMutation(MutationAddItem)
+    const [updateSteriLabel] = useMutation(MutationAddItem)
     const [loading_steri_cycle_item, setLoadingSteriCycleItem] = useState<{ [id: number]: boolean }>({})
+    const apollo = useApolloClient()
 
     const {
         data,
@@ -52,7 +68,7 @@ function SteriCycleScreen() {
             id: cycle_id,
         }
     })
-    
+
     const cycle = data?.steri_cycle_by_pk as SteriCycleModel;
 
     const onScan = async (data: {
@@ -66,26 +82,52 @@ function SteriCycleScreen() {
             const { id } = data;
             // add this label to the load.
             try {
-                const { data } = await addItem({
+                const { data: steri_label_data } = await apollo.query({
+                    query: gql`query steri_label($id: bigint!) {
+                        steri_label_by_pk(id: $id) {
+                            id
+                            steri_item_id
+                            steri_cycle {
+                                id
+                                cycle_id
+                            }
+                        }
+                    }`,
                     variables: {
-                        object: {
+                        id,
+                    }
+                })
+                const steri_label = steri_label_data?.steri_label_by_pk;
+                if (!steri_label) {
+                    dialog.showSimpleDialog('Invalid Label', 'Sorry this item could not be found. You will have to re-sterilize this package.')
+                    return;
+                }
+                if (steri_label.steri_cycle && steri_label.steri_cycle.id !== cycle_id) {
+                    dialog.showSimpleDialog('Invalid Label', `This item has already been sterilized during Cycle #${steri_label.steri_cycle.cycle_id}.`)
+                    return;
+                }
+                const { data } = await updateSteriLabel({
+                    variables: {
+                        id,
+                        steri_item_id: steri_label.steri_item_id,
+                        inc_by: -1,
+                        set: {
                             steri_cycle_id: cycle.id,
-                            steri_label_id: id,
-                            user_id: user.id,
-                            deleted_at: null,
+                            steri_cycle_user_id: user.id,
+                            loaded_at: 'now()'
                         }
                     }
                 })
-                const item = data?.insert_steri_cycle_item_one as SteriCycleItemModel;
+                const item = data?.update_steri_label_by_pk as SteriLabelModel;
                 if (!item) {
                     dialog.showToast({
-                        message: `Failed to add item`, 
+                        message: `Failed to add item`,
                         type: 'error',
                     });
                     return;
                 }
                 dialog.showToast({
-                    message: `Added ${item.steri_label.steri_item.name} to cycle`,
+                    message: `Added ${item.steri_item.name} to #${cycle_id}`,
                     type: "success",
                 });
             } catch (e) {
@@ -96,7 +138,6 @@ function SteriCycleScreen() {
 
     const onSetUser = (user: UserModel) => {
         setUser(user);
-        console.log(typeof show_pin)
         if (typeof show_pin === 'function') {
             show_pin(user)
         }
@@ -107,46 +148,23 @@ function SteriCycleScreen() {
         is_scanning: !!user,
         onScan: onScan
     })
+    const [executeMutation, status] = useMutation(MutationUpdateSteriCycle);
 
-    const [executeMutation, status] = useMutation(gql`
-        mutation insert_steri_cycle($id: bigint!, $set: steri_cycle_set_input!) {
-            update_steri_cycle_by_pk(
-                pk_columns: {
-                    id: $id
-                }, _set: $set) {
-                ${SteriCycleFragment}
-            }
-        }
-    `);
-
-    const [updateSteriCycleItem] = useMutation(gql`
-        mutation update_steri_cycle_item(
-            $steri_label_id: bigint!,
-            $steri_cycle_id: bigint!,
-            $set: steri_cycle_item_set_input!) {
-                update_steri_cycle_item_by_pk(pk_columns: {
-                    steri_label_id: $steri_label_id,
-                    steri_cycle_id: $steri_cycle_id
-                }, _set: $set) {
-                    ${SteriCycleItemFragment}
-                }
-        }
-    `)
-
-    const removeSteriCycleItem = async (
-        steri_label_id: number
-    ) => {
+    const removeSteriCycleItem = async (steri_label: SteriLabelModel) => {
         setLoadingSteriCycleItem(l => ({
             ...l,
-            [steri_label_id]: true,
+            [steri_label.id]: true,
         }))
         try {
-            await updateSteriCycleItem({
+            await updateSteriLabel({
                 variables: {
-                    steri_label_id,
-                    steri_cycle_id: cycle_id,
+                    id: steri_label.id,
+                    steri_item_id: steri_label.steri_item_id,
+                    inc_by: 1,
                     set: {
-                        deleted_at: 'now()'
+                        steri_cycle_id: null,
+                        steri_cycle_user_id: null,
+                        loaded_at: null
                     }
                 }
             })
@@ -155,7 +173,7 @@ function SteriCycleScreen() {
         } finally {
             setLoadingSteriCycleItem(l => ({
                 ...l,
-                [steri_label_id]: false,
+                [steri_label.id]: false,
             }))
         }
     }
@@ -221,7 +239,7 @@ function SteriCycleScreen() {
                 </div>}
             </div>}
 
-            {(cycle.steri_cycle_items || []).length > 0 ? <SteriController
+            {(cycle.steri_labels || []).length > 0 ? <SteriController
                 status={cycle.status}
                 user={user}
                 finish_at={cycle.finish_at}
@@ -230,7 +248,7 @@ function SteriCycleScreen() {
             /> : null}
 
             <div className='py-4'>
-                {!is_scanning && (cycle.steri_cycle_items || []).length === 0 && <div className='my-6 max-w-screen-md mx-auto container flex flex-col items-center'>
+                {!is_scanning && (cycle.steri_labels || []).length === 0 && <div className='my-6 max-w-screen-md mx-auto container flex flex-col items-center'>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
                         className="w-24 h-24 mb-8">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z" />
@@ -238,15 +256,15 @@ function SteriCycleScreen() {
 
                     <h1 className='text-center mb-2 font-bold text-md'>You must scan items into Sterilizer before you can start the cycle.</h1>
                 </div>}
-                {(cycle.steri_cycle_items || []).length > 0 && <p className='text-lg font-bold'>Content</p>}
+                {(cycle.steri_labels || []).length > 0 && <p className='text-lg font-bold'>Content</p>}
                 <div className='grid grid-cols-2 gap-4'>
                     {
-                        (cycle.steri_cycle_items || []).map((item) =>
-                            <SteriCycleItem
+                        (cycle.steri_labels || []).map((item) =>
+                            <SteriLabel
                                 key={item.id}
                                 item={item}
-                                remove={() => removeSteriCycleItem(item.steri_label_id)}
-                                loading={loading_steri_cycle_item[item.steri_label_id]}
+                                remove={cycle.status === 'loading' ? () => removeSteriCycleItem(item) : undefined}
+                                loading={loading_steri_cycle_item[item.id]}
                             />)
                     }
                 </div>

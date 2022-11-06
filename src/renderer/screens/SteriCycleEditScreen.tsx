@@ -1,10 +1,10 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
-import BackButton from '../components/BackButton';
-import Loading from '../components/Loading';
+import BackButton from '../lib/BackButton';
+import Loading from '../lib/Loading';
 import { SteriCycleFragment, SteriCycleModel } from '../models/steri-cycle.model';
-import { useDialog } from '../services/dialog.context';
+import { useDialog } from '../lib/dialog.context';
 import SteriCycleForm from './SteriCycleForm';
 
 const QuerySteriCycleByPk = gql`

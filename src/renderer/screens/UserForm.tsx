@@ -2,8 +2,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from "yup"
-import Button from '../components/Button'
-import TextInput from '../components/form/TextInput'
+import Button from '../lib/Button'
+import TextInput from '../lib/form/TextInput'
 import { UserModel } from '../models/user.model'
 
 export type UserFormprops = {

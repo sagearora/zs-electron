@@ -1,9 +1,9 @@
 import { gql, useMutation } from '@apollo/client';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import BackButton from '../components/BackButton';
+import BackButton from '../lib/BackButton';
 import { LargeInt, PageLimit } from '../constants';
-import { useDialog } from '../services/dialog.context';
+import { useDialog } from '../lib/dialog.context';
 import { QuerySteriCycleList } from './SteriCycleListScreen';
 import SteriCycleForm from './SteriCycleForm';
 

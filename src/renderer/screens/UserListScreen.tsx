@@ -1,7 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { Link } from "react-router-dom";
-import BackButton from "../components/BackButton";
+import BackButton from "../lib/BackButton";
 import { UserFragment, UserModel } from "../models/user.model";
 
 export const QueryUserList = gql`

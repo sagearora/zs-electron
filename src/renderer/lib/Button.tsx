@@ -14,9 +14,9 @@ function Button({
     return (
         <button {...props}
             disabled={loading || props.disabled}
-            className={`py-2 w-full bg-slate-200 flex items-center 
+            className={`${className} py-2 w-full bg-slate-200 flex items-center 
             justify-center px-4 rounded-xl font-semibold uppercase 
-            hover:bg-orange-200 ${className}`}>
+            hover:bg-orange-200`}>
             {loading ? <svg
                 className='w-4 h-4 mr-2 animate-spin'
                 fill="currentColor"

@@ -1,4 +1,6 @@
 import { gql } from "@apollo/client";
+import { AppointmentFragment } from "./models/appointment.model";
+import { OpFragment } from "./models/op.model";
 import { SteriItemFragment } from "./models/steri-item.model";
 
 
@@ -10,3 +12,28 @@ export const QueryAllSteriItems = (f = SteriItemFragment) => gql`
             ${f}
         }
     }`;
+
+
+export const QueryOpList = (f = OpFragment) => gql`
+query list_ops($cursor: bigint!, $limit: Int!) { 
+    op(limit: $limit, where: {
+        id: {_gt: $cursor}
+    } order_by: {id: asc}) {
+        ${f}
+    }
+}
+`
+
+
+export const QueryAppointmentsByDate = (f = AppointmentFragment) => gql`
+query list_appointments($date: date!, $cursor: bigint!, $limit: Int!) { 
+    appointment(limit: $limit, where: {
+        _and: [
+            {schedule_date: {_eq: $date}},
+            {id: {_gt: $cursor}},
+        ]
+    }, order_by: {id: asc}) {
+        ${f}
+    }
+}
+`

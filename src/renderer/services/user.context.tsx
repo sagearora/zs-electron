@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { UserModel } from "../models/user.model";
 import NoUserScreen from "../screens/NoUserScreen";
-import { useDialog } from "./dialog.context";
+import { useDialog } from "../lib/dialog.context";
 
 const UserContext = createContext<{
     user: UserModel

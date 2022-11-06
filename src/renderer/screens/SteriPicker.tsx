@@ -1,8 +1,8 @@
 import { gql, useQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
-import { DropdownInput } from '../components/form/DropdownInput';
-import Loading from '../components/Loading';
+import { DropdownInput } from '../lib/form/DropdownInput';
+import Loading from '../lib/Loading';
 import { SteriFragment, SteriModel } from '../models/steri.model';
 
 export type SteriPickerProps = {

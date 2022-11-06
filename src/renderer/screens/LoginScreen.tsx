@@ -3,10 +3,10 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
-import Button from '../components/Button';
-import TextInput from '../components/form/TextInput';
+import Button from '../lib/Button';
+import TextInput from '../lib/form/TextInput';
 import { auth } from '../firebase';
-import { useDialog } from '../services/dialog.context';
+import { useDialog } from '../lib/dialog.context';
 
 const schema = yup.object({
     email: yup.string().required('Please enter your email'),

@@ -3,8 +3,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from "yup"
-import Button from '../components/Button'
-import TextInput from '../components/form/TextInput'
+import Button from '../lib/Button'
+import TextInput from '../lib/form/TextInput'
 import { SteriCycleModel } from '../models/steri-cycle.model'
 import { SteriPicker } from './SteriPicker'
 
@@ -45,7 +45,6 @@ function SteriCycleForm({
             cycle_id: data.cycle_id,
             steri_id: data.steri_id.value,
         }
-        console.log(cycle);
         return onSave(cycle);
     }
 

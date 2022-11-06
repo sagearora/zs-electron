@@ -9,23 +9,21 @@ export type DialogProps = {
 }
 
 export type ModalDialogProps = {
+  show?: boolean;
   onClose: () => void;
-  dialog: DialogProps
+  dialog?: DialogProps
 }
 
 function ModalDialog({
+  show,
   onClose,
-  dialog: {
-    title,
-    message,
-    buttons,
-  }
+  dialog
 }: ModalDialogProps) {
 
   const cancelButtonRef = useRef(null)
 
   return (
-    <Transition.Root show={true} as={Fragment}>
+    <Transition.Root show={show} as={Fragment}>
       <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" initialFocus={cancelButtonRef} onClose={onClose}>
         <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
@@ -61,18 +59,18 @@ function ModalDialog({
                   </div> */}
                   <div className="text-left">
                     <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
-                      {title}
+                      {dialog?.title}
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm whitespace-pre-line text-gray-500">
-                        {message}
+                        {dialog?.message}
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                {buttons.map((button, idx) => <Button
+                {(dialog?.buttons || []).map((button, idx) => <Button
                   {...button}
                   onClick={button.onClick || onClose}
                   type="button"

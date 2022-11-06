@@ -3,14 +3,14 @@ import dayjs from 'dayjs';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ZsMessageChannel } from '../../shared/ZsMessageChannel';
-import Button from '../components/Button';
-import Loading from '../components/Loading';
+import Button from '../lib/Button';
+import Loading from '../lib/Loading';
 import { DefaultExpiryMonths, QRType } from '../constants';
 import { SteriItemFragment, SteriItemModel } from '../models/steri-item.model';
 import { SteriLabelFragment, SteriLabelModel } from '../models/steri-label.model';
 import { UserModel } from '../models/user.model';
 import { QueryAllSteriItems } from '../queries';
-import { useDialog } from '../services/dialog.context';
+import { useDialog } from '../lib/dialog.context';
 import { createQr } from '../services/qr-service';
 import UserPinDialog from './UserPinDialog';
 

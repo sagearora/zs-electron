@@ -7,7 +7,7 @@ import AppRouter from './screens/AppRouter';
 import LoadingScreen from './screens/LoadingScreen';
 import LoginScreen from './screens/LoginScreen';
 import { ProvideClinic } from './services/clinic.context';
-import { ProvideDialog } from './services/dialog.context';
+import { ProvideDialog } from './lib/dialog.context';
 
 
 function App() {

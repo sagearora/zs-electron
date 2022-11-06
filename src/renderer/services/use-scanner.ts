@@ -40,7 +40,7 @@ function useScanner({
         }
         document.addEventListener('keydown', onKeyDown)
         return () => document.removeEventListener('keydown', onKeyDown)
-    }, [is_scanning])
+    }, [is_scanning, onScan])
 
     return {
         is_scanning

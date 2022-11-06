@@ -10,6 +10,7 @@ export type SteriItemModel = {
     contents?: string;
     is_count_enabled: boolean;
     total_count: number;
+    total_checked_out: number;
 }
 
 export const SteriItemFragment = `
@@ -24,4 +25,5 @@ export const SteriItemFragment = `
     contents
     is_count_enabled
     total_count
+    total_checked_out
 `;

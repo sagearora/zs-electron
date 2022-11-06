@@ -2,9 +2,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from "yup"
-import Button from '../components/Button'
-import SwitchInput from '../components/form/SwitchInput'
-import TextInput from '../components/form/TextInput'
+import Button from '../lib/Button'
+import SwitchInput from '../lib/form/SwitchInput'
+import TextInput from '../lib/form/TextInput'
 import { SteriModel } from '../models/steri.model'
 
 export type TemplateFormProps = {

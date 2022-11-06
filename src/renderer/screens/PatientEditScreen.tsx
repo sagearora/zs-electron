@@ -1,11 +1,11 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import BackButton from "../components/BackButton";
-import Loading from "../components/Loading";
-import NotFoundItem from "../components/NotFoundItem";
+import BackButton from "../lib/BackButton";
+import Loading from "../lib/Loading";
+import NotFoundItem from "../lib/NotFoundItem";
 import { PatientFragment, PatientModel } from "../models/patient.model";
-import { useDialog } from "../services/dialog.context";
+import { useDialog } from "../lib/dialog.context";
 import PatientForm from "./PatientForm";
 
 function PatientEditScreen() {

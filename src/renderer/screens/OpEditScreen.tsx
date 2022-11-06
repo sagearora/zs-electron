@@ -1,11 +1,11 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import BackButton from "../components/BackButton";
-import Loading from "../components/Loading";
-import NotFoundItem from "../components/NotFoundItem";
+import BackButton from "../lib/BackButton";
+import Loading from "../lib/Loading";
+import NotFoundItem from "../lib/NotFoundItem";
 import { OpFragment, OpModel } from "../models/op.model";
-import { useDialog } from "../services/dialog.context";
+import { useDialog } from "../lib/dialog.context";
 import OpForm from "./OpForm";
 import PatientForm from "./PatientForm";
 
@@ -64,7 +64,7 @@ function OpEditScreen() {
 
 
     return <div className='my-6 max-w-screen-md mx-auto container'>
-        <BackButton href='/ops' />
+        <BackButton href='/settings/ops' />
         <div className='mt-2 mb-4'>
             <p className='text-sm text-gray-500'>Edit Operatory</p>
             <p className='font-bold'>{op.name}</p>

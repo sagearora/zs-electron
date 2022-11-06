@@ -1,8 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import BackButton from "../components/BackButton";
-import Button from "../components/Button";
+import BackButton from "../lib/BackButton";
+import Button from "../lib/Button";
 import { LargeInt, PageLimit } from "../constants";
 import { PatientFragment, PatientModel } from "../models/patient.model";
 import { SteriModel } from "../models/steri.model";
