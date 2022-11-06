@@ -59,7 +59,7 @@ function SteriLabel({
             {more_info && <>
                 {item.steri_cycle_clinic_user && item.steri_cycle && <div className='mt-2'>
                     <p className='text-sm font-semibold'>Sterilization (<span className='capitalize'>{item.steri_cycle.status}</span>)</p>
-                    <p className='text-sm'>Cycle: #{item.steri_cycle.cycle_id}</p>
+                    <p className='text-sm'>Cycle: #{item.steri_cycle.cycle_number}</p>
                     <p className='text-sm'>Loaded By: {item.steri_cycle_clinic_user.name}</p>
                     <p className='text-sm'>Loaded When: {dayjs(item.loaded_at).format('YYYY-MM-DD HH:mm')}</p>
                 </div>}

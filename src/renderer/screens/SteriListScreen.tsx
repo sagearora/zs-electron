@@ -3,20 +3,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import BackButton from "../lib/BackButton";
 import { SteriFragment, SteriModel } from "../models/steri.model";
+import { QuerySteriList } from "../queries";
 
-export const QuerySteriList = gql`
-query { 
-    steri(order_by: {id: desc}) {
-        ${SteriFragment}
-    }
-}
-`
 
 function SteriListScreen() {
     const {
         loading,
         data,
-    } = useQuery(QuerySteriList)
+    } = useQuery(QuerySteriList())
 
     const steris = (data?.steri || []) as SteriModel[];
 

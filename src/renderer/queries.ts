@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import { AppointmentFragment } from "./models/appointment.model";
 import { OpFragment } from "./models/op.model";
 import { SteriItemFragment } from "./models/steri-item.model";
+import { SteriFragment } from "./models/steri.model";
 
 
 export const QueryAllSteriItems = (f = SteriItemFragment) => gql`
@@ -33,6 +34,15 @@ query list_appointments($date: date!, $cursor: bigint!, $limit: Int!) {
             {id: {_gt: $cursor}},
         ]
     }, order_by: {id: asc}) {
+        ${f}
+    }
+}
+`
+
+
+export const QuerySteriList = (f = SteriFragment, archived?: boolean) => gql`
+query { 
+    steri(order_by: {id: desc}, where: {archived_at: {_is_null: true}}) {
         ${f}
     }
 }

@@ -9,14 +9,15 @@ function Button({
     children,
     loading,
     className,
+    disabled,
     ...props
 }: ButtonProps) {
     return (
         <button {...props}
-            disabled={loading || props.disabled}
+            disabled={loading || disabled}
             className={`${className} py-2 w-full bg-slate-200 flex items-center 
             justify-center px-4 rounded-xl font-semibold uppercase 
-            hover:bg-orange-200`}>
+            ${disabled ? 'cursor-not-allowed' : 'hover:bg-orange-200'}`}>
             {loading ? <svg
                 className='w-4 h-4 mr-2 animate-spin'
                 fill="currentColor"

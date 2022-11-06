@@ -83,7 +83,6 @@ function AppointmentItemScanner({
                             steri_item_id
                             steri_cycle {
                                 id
-                                cycle_id
                                 status
                             }
                             appointment_id

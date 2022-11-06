@@ -3,20 +3,21 @@ import dayjs from 'dayjs';
 import React, { useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
-import SteriLabel from '../components/SteriLabel';
-import { QRType } from '../constants';
-import BackButton from '../lib/BackButton';
-import Button from '../lib/Button';
-import { useDialog } from '../lib/dialog.context';
-import Loading from '../lib/Loading';
-import NotFoundItem from '../lib/NotFoundItem';
-import { SteriCycleFragment, SteriCycleModel } from '../models/steri-cycle.model';
-import { SteriItemFragment } from '../models/steri-item.model';
-import { SteriLabelFragment, SteriLabelModel } from '../models/steri-label.model';
-import { UserModel } from '../models/user.model';
-import useScanner from '../services/use-scanner';
-import SteriController from './SteriController';
-import UserPinDialog from './UserPinDialog';
+import SteriLabel from '../../components/SteriLabel';
+import { QRType } from '../../constants';
+import BackButton from '../../lib/BackButton';
+import Button from '../../lib/Button';
+import { useDialog } from '../../lib/dialog.context';
+import Loading from '../../lib/Loading';
+import NotFoundItem from '../../lib/NotFoundItem';
+import { SteriCycleFragment, SteriCycleModel } from '../../models/steri-cycle.model';
+import { SteriItemFragment } from '../../models/steri-item.model';
+import { SteriLabelFragment, SteriLabelModel } from '../../models/steri-label.model';
+import { UserModel } from '../../models/user.model';
+import useScanner from '../../services/use-scanner';
+import SteriController from '../SteriController';
+import UserPinDialog from '../UserPinDialog';
+import SteriLogViewer from './SteriLogViewer';
 
 export const SubSteriCycleByPk = gql`
     subscription steri_cycle($id: bigint!) {
@@ -205,7 +206,7 @@ function SteriCycleScreen() {
             <div className='mt-2 mb-4 flex items-start border-b-2 pb-4'>
                 <div className='flex-1'>
                     <p className='text-sm text-gray-500'>{cycle.steri?.name}</p>
-                    <p className='font-bold'>#{cycle.cycle_id}</p>
+                    <p className='font-bold'>#{cycle.cycle_number}</p>
                     <p className='text-sm'>Start: {cycle.start_at ? `${dayjs(cycle.start_at).format('MM/DD/YYYY HH:mm')} - ${cycle.start_user?.name}` : 'Not Started'}</p>
                     <p className='text-sm'>Finish: {cycle.finish_at ? `${dayjs(cycle.finish_at).format('MM/DD/YYYY HH:mm')} - ${cycle.finish_user?.name}` : 'Not finished'}</p>
                     {cycle.notes ? <div className='my-2'>
@@ -215,7 +216,6 @@ function SteriCycleScreen() {
                 </div>
                 <Link to='edit'>Edit</Link>
             </div>
-
             <UserPinDialog
                 show={Boolean(show_pin)}
                 onClose={() => setShowPin(false)}
@@ -246,6 +246,10 @@ function SteriCycleScreen() {
                 updateCycle={updateCycle}
                 showPin={setShowPin}
             /> : null}
+
+            <SteriLogViewer log_data={cycle.log_data} />
+
+
 
             <div className='py-4'>
                 {!is_scanning && (cycle.steri_labels || []).length === 0 && <div className='my-6 max-w-screen-md mx-auto container flex flex-col items-center'>

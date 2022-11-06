@@ -19,7 +19,7 @@ export type SteriLabelModel = {
     steri_cycle?: {
         id: number;
         status: SteriStatus;
-        cycle_id: string;
+        cycle_number: string;
     };
     steri_cycle_clinic_user?: {
         id: number;
@@ -61,7 +61,7 @@ export const SteriLabelFragment = `
     steri_cycle {
         id
         status
-        cycle_id
+        cycle_number
     }
     steri_cycle_clinic_user {
         id

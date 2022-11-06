@@ -15,12 +15,12 @@ export type SteriTemplateFormProps = {
 }
 
 type StartFields = {
-    cycle_id: string;
+    cycle_number: number;
     steri_id: { label: string; value: number };
 }
 
 const schema = yup.object({
-    cycle_id: yup.string().required('Please enter the steri cycle id'),
+    cycle_number: yup.string().required('Please enter the steri cycle number'),
     steri_id: yup.object().required('Please select a sterilizer'),
 }).required();
 
@@ -32,7 +32,7 @@ function SteriCycleForm({
     const { control, handleSubmit, getValues } = useForm<StartFields>({
         resolver: yupResolver(schema),
         defaultValues: cycle ? {
-            cycle_id: cycle.cycle_id,
+            cycle_number: cycle.cycle_number,
             steri_id: {
                 label: `${cycle.steri?.name} - ${cycle.steri?.serial}`,
                 value: cycle.steri_id
@@ -42,7 +42,7 @@ function SteriCycleForm({
 
     const onSubmit: SubmitHandler<StartFields> = async data => {
         const cycle = {
-            cycle_id: data.cycle_id,
+            cycle_number: data.cycle_number,
             steri_id: data.steri_id.value,
         }
         return onSave(cycle);
@@ -57,9 +57,9 @@ function SteriCycleForm({
                 control={control as any}
             />
             <TextInput
-                label='Cycle #'
+                label='Cycle Number #'
                 control={control}
-                name='cycle_id'
+                name='cycle_number'
             />
             <Button
                 loading={loading}

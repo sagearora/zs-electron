@@ -1,7 +1,8 @@
 import { BrowserWindow } from "electron"
 import { ZsMessageChannel } from "../shared/ZsMessageChannel"
-import createLabelDb from "./label_maker/createLabelDb"
-import printGodex from "./label_maker/printGodex"
+import createLabelDb from "./label-maker/create-label-db"
+import printGodex from "./label-maker/print-godex"
+import { readAllFiles } from "./read-all-files/read-all-files"
 
 export const handleMessage = async (
     event: Electron.IpcMainInvokeEvent,
@@ -20,6 +21,10 @@ export const handleMessage = async (
             case ZsMessageChannel.ToggleFullscreen: {
                 const window = BrowserWindow.getFocusedWindow();
                 window.setFullScreen(!window.fullScreen)
+            }
+            case ZsMessageChannel.ReadAllFiles: {
+                const result = await readAllFiles(args as string[])
+                return result
             }
         }
     } catch (e) {

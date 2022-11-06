@@ -1,6 +1,5 @@
 import React from 'react'
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
-import CheckedOut from './CheckedOut'
 import CheckoutScreen from './CheckoutScreen/CheckoutScreen'
 import DashboardScreen from './DashboardScreen'
 import LabelPrintScreen from './LabelPrintScreen'
@@ -8,7 +7,6 @@ import Layout from './Layout'
 import OpCreateScreen from './OpCreateScreen'
 import OpEditScreen from './OpEditScreen'
 import OpListScreen from './OpListScreen'
-import OpScreen from './OpScreen'
 import PatientCreateScreen from './PatientCreateScreen'
 import PatientEditScreen from './PatientEditScreen'
 import PatientListScreen from './PatientListScreen'
@@ -17,13 +15,14 @@ import SettingsScreen from './SettingsScreen'
 import SteriCreateScreen from './SteriCreateScreen'
 import SteriCycleEditScreen from './SteriCycleEditScreen'
 import SteriCycleListScreen from './SteriCycleListScreen'
-import SteriCycleScreen from './SteriCycleScreen'
+import SteriCycleScreen from './SteriCycleScreen/SteriCycleScreen'
 import SteriCycleStartScreen from './SteriCycleStartScreen'
 import SteriEditScreen from './SteriEditScreen'
 import SteriItemCreateScreen from './SteriItemCreateScreen'
 import SteriItemEditScreen from './SteriItemEditScreen'
 import SteriItemListScreen from './SteriItemListScreen'
 import SteriListScreen from './SteriListScreen'
+import UploadSteriData from './UploadSteriData/UploadSteriData'
 import UserCreateScreen from './UserCreateScreen'
 import UserEditScreen from './UserEditScreen'
 import UserGuard from './UserGuard'
@@ -52,6 +51,7 @@ function AppRouter() {
                         <Route path=':cycle_id/edit' element={<SteriCycleEditScreen />} />
                         <Route index element={<SteriCycleListScreen />} />
                     </Route>
+                    <Route path='/upload-steri-data' element={<UploadSteriData />} />
                     <Route path='/settings' element={<UserGuard adminRequired />}>
                         <Route path='users'>
                             <Route path='create' element={<UserCreateScreen />} />

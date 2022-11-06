@@ -18,7 +18,8 @@ export type SteriCycleModel = {
             name: string;
         }
     }
-    cycle_id: string;
+    log_data?: string;
+    cycle_number: number;
     start_user?: {
         id: number;
         name: string;
@@ -44,7 +45,8 @@ export const SteriCycleFragment = `
         name
         serial
     }
-    cycle_id
+    log_data
+    cycle_number
     start_user {
         ${UserFragment}
     }

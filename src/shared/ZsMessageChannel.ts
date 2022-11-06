@@ -1,5 +1,6 @@
 
 export enum ZsMessageChannel {
     PrintLabel = 'print-label',
-    ToggleFullscreen = 'toggle-fullscreen'
+    ToggleFullscreen = 'toggle-fullscreen',
+    ReadAllFiles = 'read-all-files'
 }

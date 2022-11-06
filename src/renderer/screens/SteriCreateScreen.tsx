@@ -6,7 +6,7 @@ import { SteriFragment } from "../models/steri.model";
 import { useClinic } from "../services/clinic.context";
 import { useDialog } from "../lib/dialog.context";
 import SteriForm from "./SteriForm";
-import { QuerySteriList } from "./SteriListScreen";
+import { QuerySteriList } from "../queries";
 
 function SteriCreateScreen() {
     const { clinic } = useClinic();
@@ -22,7 +22,7 @@ function SteriCreateScreen() {
         }
     `, {
         refetchQueries: [{
-            query: QuerySteriList,
+            query: QuerySteriList(),
         }]
     })
 
