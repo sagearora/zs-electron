@@ -69,13 +69,19 @@ function ModalDialog({
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                {(dialog?.buttons || []).map((button, idx) => <Button
-                  {...button}
-                  onClick={button.onClick || onClose}
-                  type="button"
+              <div className="bg-gray-50 px-4 py-3 flex justify-end">
+                {(dialog?.buttons || []).map((button, idx) => <div className='mx-1'
                   key={idx}
-                />)}
+                ><Button
+                    {...button}
+                    onClick={(e) => {
+                      if (button.onClick) {
+                        button.onClick(e)
+                      }
+                      onClose()
+                    }}
+                    type="button"
+                  /></div>)}
               </div>
             </div>
           </Transition.Child>

@@ -111,6 +111,7 @@ function AppointmentList({
             {
                 !loading && appointments.length === 0 && <NotFoundItem
                     title='No upcoming appointments'
+                    noBack
                 />
             }
             <div className='py-2'>

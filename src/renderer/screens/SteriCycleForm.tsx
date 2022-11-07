@@ -18,9 +18,24 @@ type StartFields = {
     cycle_number: number;
     steri_id: { label: string; value: number };
 }
+// 0
+// : 
+// "zs/eyJ0eXBlIjoxLCJpZCI6Mjc5fQ=="
+// 1
+// : 
+// "zs/eyJ0eXBlIjoxLCJpZCI6MjgwfQ=="
+// 2
+// : 
+// "zs/eyJ0eXBlIjoxLCJpZCI6MjgxfQ=="
+// 3
+// : 
+// "zs/eyJ0eXBlIjoxLCJpZCI6MjgyfQ=="
+// length
+// : 
+// 4
 
 const schema = yup.object({
-    cycle_number: yup.string().required('Please enter the steri cycle number'),
+    cycle_number: yup.number().required('Please enter the steri cycle number'),
     steri_id: yup.object().required('Please select a sterilizer'),
 }).required();
 

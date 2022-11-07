@@ -55,7 +55,7 @@ mutation update_steri_cycle($id: bigint!, $set: steri_cycle_set_input!) {
 function SteriCycleScreen() {
     const [user, setUser] = useState<UserModel | undefined>();
     const [show_pin, setShowPin] = useState<boolean | Function>(false);
-    const cycle_id = useParams().cycle_id;
+    const cycle_id = +useParams().cycle_id;
     const dialog = useDialog();
     const [updateSteriLabel] = useMutation(MutationAddItem)
     const [loading_steri_cycle_item, setLoadingSteriCycleItem] = useState<{ [id: number]: boolean }>({})
@@ -90,21 +90,29 @@ function SteriCycleScreen() {
                             steri_item_id
                             steri_cycle {
                                 id
-                                cycle_id
+                                cycle_number
                             }
                         }
                     }`,
                     variables: {
                         id,
-                    }
+                    },
+                    fetchPolicy: 'network-only'
                 })
-                const steri_label = steri_label_data?.steri_label_by_pk;
+                const steri_label = steri_label_data?.steri_label_by_pk as {
+                    id: number;
+                    steri_item_id: number;
+                    steri_cycle?: {
+                        id: number;
+                        cycle_number: string;
+                    }
+                } | undefined;
                 if (!steri_label) {
                     dialog.showSimpleDialog('Invalid Label', 'Sorry this item could not be found. You will have to re-sterilize this package.')
                     return;
                 }
                 if (steri_label.steri_cycle && steri_label.steri_cycle.id !== cycle_id) {
-                    dialog.showSimpleDialog('Invalid Label', `This item has already been sterilized during Cycle #${steri_label.steri_cycle.cycle_id}.`)
+                    dialog.showSimpleDialog('Invalid Label', `This item has already been sterilized during Cycle #${steri_label.steri_cycle.cycle_number}.`)
                     return;
                 }
                 const { data } = await updateSteriLabel({
@@ -163,6 +171,8 @@ function SteriCycleScreen() {
                     steri_item_id: steri_label.steri_item_id,
                     inc_by: 1,
                     set: {
+                        checkin_at: null,
+                        checkin_user_id: null,
                         steri_cycle_id: null,
                         steri_cycle_user_id: null,
                         loaded_at: null

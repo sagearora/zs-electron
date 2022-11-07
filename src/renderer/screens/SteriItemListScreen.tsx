@@ -1,16 +1,27 @@
-import { useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import BackButton from "../lib/BackButton";
+import Button from "../lib/Button";
+import { useDialog } from "../lib/dialog.context";
 import { SteriItemModel } from "../models/steri-item.model";
 import { QueryAllSteriItems } from "../queries";
 
+const MutationResetTotalCheckout = gql`
+    mutation {
+        update_steri_item(where: {total_checked_out: {_neq: 0}}, _set: {total_checked_out: 0}) {
+            affected_rows
+        }
+    }
+`;
 
 function SteriItemListScreen() {
+    const dialog = useDialog();
     const {
         loading,
         data,
     } = useQuery(QueryAllSteriItems())
+    const [reset] = useMutation(MutationResetTotalCheckout);
 
     const items = (data?.steri_item || []) as SteriItemModel[];
     const categories = useMemo(() => {
@@ -30,6 +41,20 @@ function SteriItemListScreen() {
             }
         })
     }, [items])
+
+    const resetTotalCheckout = () => {
+        dialog.showDialog({
+            title: 'DANGER',
+            message: 'Are you sure you want to reset all checked out totals? This cannot be undone. Only use this if all items are checked in.',
+            buttons: [{
+                children: 'Cancel',
+            }, {
+                children: 'Confirm',
+                onClick: () => reset(),
+                className: 'bg-red-300'
+            }]
+        })
+    }
 
     return <div className='my-6 max-w-screen-md mx-auto container'>
         <div className='flex items-center mb-4'>
@@ -51,13 +76,14 @@ function SteriItemListScreen() {
                 key={item.id}>
                 <div className={`flex-1 ${item.archived_at ? 'line-through text-gray-700' : ''}`}>
                     <p className='text-lg'>{item.name}</p>
-                    <p className='text-sm text-gray-800'>{item.is_count_enabled ? `Count: ${item.total_count}` : ''}</p>
+                    <p className='text-sm text-gray-800'>{item.is_count_enabled ? `Count: ${item.total_count}. Checked Out: ${item.total_checked_out}` : ''}</p>
                 </div>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
             </Link>)}
         </div>)}
+        <Button className="mt-4 bg-red-300" onClick={resetTotalCheckout}>Reset Total Checked Out To Zero</Button>
 
     </div>
 }

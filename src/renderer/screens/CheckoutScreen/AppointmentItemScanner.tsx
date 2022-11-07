@@ -90,7 +90,8 @@ function AppointmentItemScanner({
                     }`,
                     variables: {
                         id,
-                    }
+                    },
+                    fetchPolicy: 'network-only'
                 })
                 const steri_label = steri_label_data?.steri_label_by_pk;
                 if (!steri_label) {
