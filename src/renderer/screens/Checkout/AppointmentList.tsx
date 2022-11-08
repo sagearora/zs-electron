@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
 import React, { useState } from 'react';
-import { QueryAppointmentsByDate } from '../../../renderer/queries';
+import { QueryAppointmentsByDate } from '../../queries';
 import Button from '../../lib/Button';
 import Loading from '../../lib/Loading';
 import NotFoundItem from '../../lib/NotFoundItem';

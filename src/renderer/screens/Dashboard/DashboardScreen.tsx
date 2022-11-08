@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useDialog } from '../lib/dialog.context';
+import { useDialog } from '../../lib/dialog.context';
 import CheckedOut from './CheckedOut';
+import SporeTest from './SporeTest';
 
 const links = [
   {
@@ -60,7 +61,7 @@ function DashboardScreen() {
 
   return (
     <div className='my-6 max-w-screen-md mx-auto container'>
-      <div className='grid grid-cols-4 gap-2'>
+      <div className='grid grid-cols-4 gap-2 py-6'>
         {links.map(link => <Link key={link.link} to={link.link}>
           <div className='bg-slate-200 block w-full h-full py-8 text-center rounded-xl flex flex-col items-center justify-center'>
             {link.icon}
@@ -71,6 +72,7 @@ function DashboardScreen() {
         </Link>)}
       </div>
       <CheckedOut />
+      <SporeTest />
     </div>
   )
 }

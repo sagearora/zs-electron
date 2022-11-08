@@ -12,7 +12,7 @@ export type TemplateFormProps = {
     onSave: (v: {
         name: string;
         serial: string;
-        archived_at: string|null;
+        archived_at: string | null;
     }) => Promise<void>;
 }
 
@@ -55,12 +55,12 @@ function SteriForm({
                 control={control}
                 name='name'
             />
-             <TextInput
+            <TextInput
                 label='Serial #'
                 control={control}
                 name='serial'
             />
-            <SwitchInput 
+            <SwitchInput
                 label='Sterilizer is active'
                 control={control}
                 name='is_active'

@@ -1,14 +1,14 @@
 import { gql, useApolloClient, useMutation, useSubscription } from '@apollo/client';
 import React, { useMemo, useState } from 'react';
-import { QRType } from '../constants';
-import Button from '../lib/Button';
-import { useDialog } from '../lib/dialog.context';
-import NotFoundItem from '../lib/NotFoundItem';
-import { SteriItemFragment, SteriItemModel } from '../models/steri-item.model';
-import { SteriLabelFragment, SteriLabelModel } from '../models/steri-label.model';
-import { UserModel } from '../models/user.model';
-import useScanner from '../services/use-scanner';
-import UserPinDialog from './UserPinDialog';
+import { QRType } from '../../constants';
+import Button from '../../lib/Button';
+import { useDialog } from '../../lib/dialog.context';
+import NotFoundItem from '../../lib/NotFoundItem';
+import { SteriItemFragment, SteriItemModel } from '../../models/steri-item.model';
+import { SteriLabelFragment, SteriLabelModel } from '../../models/steri-label.model';
+import { UserModel } from '../../models/user.model';
+import useScanner from '../../services/use-scanner';
+import UserPinDialog from '../UserPinDialog';
 
 const SubCheckedOut = gql`
   subscription checked_out {
@@ -121,7 +121,7 @@ function CheckedOut() {
   })
 
   return (
-    <div className='py-6'>
+    <div className='py-6 border-t-2'>
       <UserPinDialog
         show={show_pin}
         onClose={() => setShowPin(false)}

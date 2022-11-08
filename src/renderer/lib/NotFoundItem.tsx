@@ -19,7 +19,7 @@ function NotFoundItem({
     noBack,
 }: NotFoundItemProps) {
     return (
-        <div className='my-6 max-w-screen-md mx-auto container flex flex-col items-center'>
+        <div className='my-4 max-w-screen-md mx-auto container flex flex-col items-center'>
             {icon}
             <h1 className='text-center my-2 font-bold text-lg'>{title}</h1>
             <h1 className='text-center mb-2 text-md'>{description}</h1>

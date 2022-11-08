@@ -213,19 +213,24 @@ function SteriCycleScreen() {
     return (
         <div className='my-6 max-w-screen-md mx-auto container'>
             <BackButton href='/cycles' />
-            <div className='mt-2 mb-4 flex items-start border-b-2 pb-4'>
+            <div className='mt-2 flex items-start border-b-2 pb-2'>
                 <div className='flex-1'>
                     <p className='text-sm text-gray-500'>{cycle.steri?.name}</p>
                     <p className='font-bold'>#{cycle.cycle_number}</p>
                     <p className='text-sm'>Start: {cycle.start_at ? `${dayjs(cycle.start_at).format('MM/DD/YYYY HH:mm')} - ${cycle.start_user?.name}` : 'Not Started'}</p>
                     <p className='text-sm'>Finish: {cycle.finish_at ? `${dayjs(cycle.finish_at).format('MM/DD/YYYY HH:mm')} - ${cycle.finish_user?.name}` : 'Not finished'}</p>
-                    {cycle.notes ? <div className='my-2'>
-                        <p className='text-sm text-gray-800 font-semibold'>Notes</p>
-                        <p className='text-sm'>{cycle.notes}</p>
-                    </div> : null}
                 </div>
                 <Link to='edit'>Edit</Link>
             </div>
+            {cycle.is_spore_test_enabled && <div className={`${!cycle.spore_test_recorded_at ? 'bg-orange-200' : cycle.spore_test_result === 'passed' ? 'bg-green-200' : 'bg-red-200'} p-2 rounded-xl my-2`}>
+                <p className='text-sm font-bold'>Spore Test</p>
+                {cycle.spore_test_user && <p className='text-sm'>Recorded by: {cycle.spore_test_user.name}</p>}
+                <p className='text-sm'>{!cycle.spore_test_result ? 'Pending results' : `${cycle.spore_test_result} @ ${dayjs(cycle.spore_test_recorded_at).format('MM/DD/YYYY HH:mm')}`}</p>
+            </div>}
+            {cycle.notes ? <div className='my-2'>
+                <p className='text-sm text-gray-800 font-semibold'>Notes</p>
+                <p className='text-sm'>{cycle.notes}</p>
+            </div> : null}
             <UserPinDialog
                 show={Boolean(show_pin)}
                 onClose={() => setShowPin(false)}

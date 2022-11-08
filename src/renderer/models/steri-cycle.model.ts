@@ -2,6 +2,7 @@ import { SteriLabelFragment, SteriLabelModel } from "./steri-label.model"
 import { UserFragment } from "./user.model"
 
 export type SteriStatus = 'loading'|'running'|'finished'|'failed'
+export type SporeTestResult = 'passed'|'failed'
 
 export type SteriCycleModel = {
     id: number;
@@ -32,6 +33,13 @@ export type SteriCycleModel = {
     finish_at?: string;
     notes?: string;
     steri_labels?: SteriLabelModel[]
+    is_spore_test_enabled: boolean;
+    spore_test_result?: SporeTestResult
+    spore_test_user?: {
+        id: number;
+        name: string;
+    }
+    spore_test_recorded_at?: string;
 }
 
 export const SteriCycleFragment = `
@@ -59,4 +67,11 @@ export const SteriCycleFragment = `
     steri_labels(order_by: {id: desc}) {
         ${SteriLabelFragment}
     }
+    is_spore_test_enabled
+    spore_test_result
+    spore_test_user {
+        id
+        name
+    }
+    spore_test_recorded_at
 `
