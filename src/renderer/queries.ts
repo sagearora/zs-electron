@@ -27,7 +27,7 @@ query list_ops($cursor: bigint!, $limit: Int!) {
 `
 
 
-export const QueryAppointmentsByDate = ({ f, sub }: {
+export const QueryAppointmentsByDate = ({ f = AppointmentFragment, sub }: {
     f?: string;
     sub?: boolean;
 }) => gql`
