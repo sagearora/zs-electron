@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery, useSubscription } from '@apollo/client';
 import React, { useState } from 'react';
 import { QueryAppointmentsByDate } from '../../queries';
 import Button from '../../lib/Button';
@@ -33,36 +33,19 @@ function AppointmentList({
 }: AppointmentListProps) {
     const dialog = useDialog();
     const [create_patient, setCreatePatient] = useState(false);
-    const [has_more, setHasMore] = useState(true);
     const {
         loading,
         data,
-        refetch,
-        fetchMore,
-    } = useQuery(QueryAppointmentsByDate(), {
+    } = useSubscription(QueryAppointmentsByDate({sub: true}), {
         variables: {
             date,
             cursor: 0,
             limit: PageLimit,
         },
-        onCompleted: (d) => {
-            setHasMore(d.appointment?.length % PageLimit === 0);
-        }
     })
     const [insertAppt] = useMutation(MutationInsertAppointment)
 
     const appointments = (data?.appointment || []) as AppointmentModel[];
-
-    const loadMore = () => {
-        if (appointments.length > 0) {
-            fetchMore({
-                variables: {
-                    cursor: appointments[appointments.length - 1].id,
-                    limit: PageLimit,
-                }
-            })
-        }
-    }
 
     const insertAppointment = async (p: PatientModel) => {
         try {
@@ -78,7 +61,6 @@ function AppointmentList({
             })
             if (data?.insert_appointment_one) {
                 onSelect(data.insert_appointment_one)
-                refetch();
             }
         } catch (e) {
             dialog.showError(e)
@@ -121,7 +103,6 @@ function AppointmentList({
                     <p>{appt.patient.first_name} {appt.patient.last_name}</p>
                 </button>)}
             </div>
-            {has_more && <Button className='my-2' onClick={loadMore}>Load More</Button>}
         </div >
     )
 }

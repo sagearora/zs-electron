@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { boolean, string } from "yup/lib/locale";
 import { AppointmentFragment } from "./models/appointment.model";
 import { OpFragment } from "./models/op.model";
 import { SteriItemFragment } from "./models/steri-item.model";
@@ -26,8 +27,11 @@ query list_ops($cursor: bigint!, $limit: Int!) {
 `
 
 
-export const QueryAppointmentsByDate = (f = AppointmentFragment) => gql`
-query list_appointments($date: date!, $cursor: bigint!, $limit: Int!) { 
+export const QueryAppointmentsByDate = ({ f, sub }: {
+    f?: string;
+    sub?: boolean;
+}) => gql`
+${sub ? 'subscription' : 'query'} list_appointments($date: date!, $cursor: bigint!, $limit: Int!) { 
     appointment(limit: $limit, where: {
         _and: [
             {schedule_date: {_eq: $date}},

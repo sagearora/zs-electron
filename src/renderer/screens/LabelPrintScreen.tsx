@@ -87,9 +87,8 @@ function LabelPrintScreen() {
         if (!window.electron || !window.electron.ipcRenderer) {
             return;
         }
-        console.log(labels.map(label => createQr({type: QRType.SteriLabel, id: label.id})))
+        // console.log(labels.map(label => createQr({type: QRType.SteriLabel, id: label.id})))
 
-        return;
         setIsPrinting(true);
         const result = await window.electron.ipcRenderer.invoke('zs-message', [
             ZsMessageChannel.PrintLabel,

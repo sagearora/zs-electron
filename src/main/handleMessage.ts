@@ -21,6 +21,7 @@ export const handleMessage = async (
             case ZsMessageChannel.ToggleFullscreen: {
                 const window = BrowserWindow.getFocusedWindow();
                 window.setFullScreen(!window.fullScreen)
+                break;
             }
             case ZsMessageChannel.ReadAllFiles: {
                 const result = await readAllFiles(args as string[])
