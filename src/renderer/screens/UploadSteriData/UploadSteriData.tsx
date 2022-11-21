@@ -96,7 +96,7 @@ function UploadSteriData() {
     }
 
     return (
-        <div className='my-6 max-w-screen-md mx-auto container'>
+        <div className='my-6 mx-auto container'>
             <div className='flex items-center mb-4'>
                 <BackButton href='/' />
                 <p className='ml-2 font-bold text-gray-500'>Sterilizers</p>

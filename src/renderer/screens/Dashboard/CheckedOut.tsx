@@ -1,14 +1,13 @@
-import { gql, useApolloClient, useMutation, useSubscription } from '@apollo/client';
-import React, { useMemo, useState } from 'react';
+import { gql, useMutation, useSubscription } from '@apollo/client';
+import React, { useState } from 'react';
 import { QRType } from '../../constants';
 import Button from '../../lib/Button';
 import { useDialog } from '../../lib/dialog.context';
 import NotFoundItem from '../../lib/NotFoundItem';
 import { SteriItemFragment, SteriItemModel } from '../../models/steri-item.model';
 import { SteriLabelFragment, SteriLabelModel } from '../../models/steri-label.model';
-import { UserModel } from '../../models/user.model';
 import useScanner from '../../services/use-scanner';
-import UserPinDialog from '../UserPinDialog';
+import { useUser } from '../../services/user.context';
 
 const SubCheckedOut = gql`
   subscription checked_out {
@@ -28,15 +27,9 @@ const MutationUpdateSteriLabel = gql`
 `;
 
 function CheckedOut() {
-  const apollo = useApolloClient()
   const dialog = useDialog()
-  const [user, setUser] = useState<UserModel | undefined>();
-  const [show_pin, setShowPin] = useState(false);
-
-  const onSetUser = (user: UserModel) => {
-    setUser(user);
-    setShowPin(false);
-  }
+  const { user } = useUser();
+  const [scanning, setScanning] = useState(false);
 
   const {
     data,
@@ -56,38 +49,38 @@ function CheckedOut() {
       const { id } = data;
       // add this label to the load.
       try {
-        const { data: steri_label_data } = await apollo.query({
-          query: gql`query steri_label($id: bigint!) {
-                    steri_label_by_pk(id: $id) {
-                        id
-                        steri_item_id
-                        appointment_id
-                        steri_cycle_id
-                        checkin_at
-                    }
-                }`,
-          variables: {
-            id,
-          },
-          fetchPolicy: 'network-only'
-        })
-        const steri_label = steri_label_data?.steri_label_by_pk;
-        if (!steri_label) {
-          dialog.showSimpleDialog('Invalid Label', 'Sorry this item could not be found. You will have to re-sterilize this package.')
-          return;
-        }
-        if (steri_label.appointment_id) {
-          dialog.showSimpleDialog('Used for Patient', `This item has already been checked out for a patient. Cannot check back in.`)
-          return;
-        }
-        if (steri_label.steri_cycle_id) {
-          dialog.showSimpleDialog('Already Sterilized', `This item has already been sterilized. It can be safely put away.`)
-          return;
-        }
-        if (steri_label.checkin_at) {
-          dialog.showSimpleDialog('Already checked in', `This item has already been checked in.`)
-          return;
-        }
+        // const { data: steri_label_data } = await apollo.query({
+        //   query: gql`query steri_label($id: bigint!) {
+        //             steri_label_by_pk(id: $id) {
+        //                 id
+        //                 steri_item_id
+        //                 appointment_id
+        //                 steri_cycle_id
+        //                 checkin_at
+        //             }
+        //         }`,
+        //   variables: {
+        //     id,
+        //   },
+        //   fetchPolicy: 'network-only'
+        // })
+        // const steri_label = steri_label_data?.steri_label_by_pk;
+        // if (!steri_label) {
+        //   dialog.showSimpleDialog('Invalid Label', 'Sorry this item could not be found. You will have to re-sterilize this package.')
+        //   return;
+        // }
+        // if (steri_label.appointment_id) {
+        //   dialog.showSimpleDialog('Used for Patient', `This item has already been checked out for a patient. Cannot check back in.`)
+        //   return;
+        // }
+        // if (steri_label.steri_cycle_id) {
+        //   dialog.showSimpleDialog('Already Sterilized', `This item has already been sterilized. It can be safely put away.`)
+        //   return;
+        // }
+        // if (steri_label.checkin_at) {
+        //   dialog.showSimpleDialog('Already checked in', `This item has already been checked in.`)
+        //   return;
+        // }
         const { data } = await updateLabel({
           variables: {
             id,
@@ -116,17 +109,12 @@ function CheckedOut() {
   }
 
   useScanner({
-    is_scanning: !!user,
+    is_scanning: scanning,
     onScan: onScan
   })
 
   return (
     <div className='py-6 border-t-2'>
-      <UserPinDialog
-        show={show_pin}
-        onClose={() => setShowPin(false)}
-        setUser={onSetUser} />
-
       <p className='text-md font-semibold text-center mb-2'>What's checked out?</p>
       <div className='grid grid-cols-4 gap-2'>
         {items.map(item => <div key={item.id} className='border-slate-400 border-2 rounded-xl flex flex-col items-center p-4'>
@@ -136,7 +124,7 @@ function CheckedOut() {
         </div>)}
       </div>
       {items.length > 0 ? <div className='py-2'>
-        {!user ? <Button className={`bg-green-200`} onClick={() => setShowPin(true)}>
+        {!scanning ? <Button className={`bg-green-200`} onClick={() => setScanning(true)}>
           <div className='flex items-center'>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
               className="w-6 h-6 mr-2">
@@ -151,7 +139,7 @@ function CheckedOut() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
           </svg>
           <h2 className='text-md font-semibold'>Use the handheld scanner to check-in items waiting to be sterilized.</h2>
-          <Button onClick={() => setUser(undefined)}>End Scanning</Button>
+          <Button onClick={() => setScanning(false)}>End Scanning</Button>
         </div>}
       </div> : <NotFoundItem
         icon={<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="text-green-500 w-12 h-12">

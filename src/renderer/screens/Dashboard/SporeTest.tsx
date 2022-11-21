@@ -1,9 +1,9 @@
 import { gql, useMutation, useSubscription } from '@apollo/client';
-import React, { useState } from 'react';
+import React from 'react';
 import { useDialog } from '../../lib/dialog.context';
+import Loading from '../../lib/Loading';
 import { SteriCycleFragment, SteriCycleModel } from '../../models/steri-cycle.model';
-import { UserModel } from '../../models/user.model';
-import UserPinDialog from '../UserPinDialog';
+import { useUser } from '../../services/user.context';
 import SporeTestItem from './SporeTestItem';
 
 const SubCheckedOut = gql`
@@ -31,24 +31,13 @@ const MutationUpdateSteriCycle = gql`
 
 function SporeTest() {
   const dialog = useDialog()
-  const [user, setUser] = useState<UserModel | undefined>();
-  const [show_pin, setShowPin] = useState<boolean | Function>(false);
-
+  const { user } = useUser();
   const {
     data,
     loading,
   } = useSubscription(SubCheckedOut)
   const [executeMutation] = useMutation(MutationUpdateSteriCycle)
   const items = (data?.steri_cycle || []) as SteriCycleModel[]
-
-  const onSetUser = (user: UserModel) => {
-    setUser(user);
-    if (typeof show_pin === 'function') {
-      show_pin(user)
-    }
-    setShowPin(false);
-  }
-
 
   const updateCycle = async (cycle_id: number, v: any) => {
     try {
@@ -72,15 +61,10 @@ function SporeTest() {
 
   return (
     <div className='py-6 border-t-2'>
-      <UserPinDialog
-        show={Boolean(show_pin)}
-        onClose={() => setShowPin(false)}
-        setUser={onSetUser} />
-
       <p className='text-md font-semibold text-center mb-2'>Pending Spore Tests</p>
+      {loading && <Loading />}
       {items.map(cycle => <SporeTestItem
         user={user}
-        showPin={setShowPin}
         key={cycle.id}
         updateCycle={updateCycle}
         cycle={cycle} />)}

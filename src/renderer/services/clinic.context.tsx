@@ -1,9 +1,14 @@
 import { gql, useSubscription } from "@apollo/client";
 import React, { createContext, ReactNode, useContext } from "react";
+import { auth } from "../firebase";
+import Button from "../lib/Button";
+import NotFoundItem from "../lib/NotFoundItem";
 import { ClinicFragment, ClinicModel } from "../models/clinic.model";
 
+export type DeviceMode = 'steri' | 'op'
+
 const ClinicContext = createContext<{
-    clinic: ClinicModel
+    clinic: ClinicModel;
 }>({} as any);
 
 export type ProvideClinicProps = {
@@ -26,13 +31,17 @@ export const ProvideClinic = ({
     const { data, loading } = useSubscription(SubscriptionClinic);
     const clinics = (data?.clinic || []) as ClinicModel[];
 
+    const signout = () => auth.signOut();
 
     if (loading) {
         return <>{LoadingScreen}</>
     }
 
     if (clinics.length === 0) {
-        return null;
+        return <div className="container py-6">
+            <NotFoundItem title='Clinic not found' noBack />
+            <Button onClick={signout}>Sign Out</Button>
+        </div>;
     }
 
     const clinic = clinics[0];

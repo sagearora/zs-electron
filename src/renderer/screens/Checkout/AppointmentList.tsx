@@ -1,14 +1,14 @@
-import { gql, useMutation, useQuery, useSubscription } from '@apollo/client';
+import { gql, useMutation, useSubscription } from '@apollo/client';
+import dayjs from 'dayjs';
 import React, { useState } from 'react';
-import { QueryAppointmentsByDate } from '../../queries';
-import Button from '../../lib/Button';
+import { PatientSearch } from '../../components/PatientSearch';
+import { PageLimit } from '../../constants';
+import { useDialog } from '../../lib/dialog.context';
 import Loading from '../../lib/Loading';
 import NotFoundItem from '../../lib/NotFoundItem';
-import { PageLimit } from '../../constants';
 import { AppointmentFragment, AppointmentModel } from '../../models/appointment.model';
 import { PatientModel } from '../../models/patient.model';
-import { useDialog } from '../../lib/dialog.context';
-import { PatientSearch } from '../PatientSearch';
+import { QueryAppointmentsByDate } from '../../queries';
 import AddPatientModal from './AddPatientModal';
 
 
@@ -54,7 +54,7 @@ function AppointmentList({
                 variables: {
                     object: {
                         patient_id,
-                        schedule_date: new Date().toUTCString(),
+                        schedule_date: (dayjs().startOf('d').toDate().toUTCString()),
                         deleted_at: null,
                     }
                 }

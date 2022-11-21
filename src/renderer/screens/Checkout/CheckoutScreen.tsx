@@ -18,7 +18,7 @@ function CheckoutScreen() {
             <AppointmentList date={today} onSelect={onSelect} selected={selected_appt} />
         </div>
         <div className='flex-1 p-4 relative'>
-            <p className='text-md font-bold mb-2'>{selected_appt?.patient.first_name || 'Pick an appointment'}</p>
+            <p className='text-md font-bold mb-2'>{selected_appt ? `${selected_appt.patient.first_name} (${selected_appt.id})` : 'Pick an appointment'}</p>
             {selected_appt ? <AppointmentItemScanner
                 appointment_id={selected_appt.id}
                 patient_name={selected_appt.patient.first_name}

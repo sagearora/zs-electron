@@ -64,7 +64,7 @@ export const SteriCycleFragment = `
     }
     finish_at
     notes
-    steri_labels(order_by: {id: desc}) {
+    steri_labels(order_by: {loaded_at: desc}) {
         ${SteriLabelFragment}
     }
     is_spore_test_enabled

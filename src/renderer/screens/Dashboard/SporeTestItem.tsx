@@ -8,26 +8,20 @@ import { UserModel } from '../../models/user.model'
 
 export type SporeTestItem = {
     cycle: SteriCycleModel
-    user?: UserModel;
-    showPin: (cb: Function) => void;
+    user: UserModel;
     updateCycle: (cycle_id: number, v: any) => Promise<boolean>
 }
 
 function SporeTestItem({
     cycle,
     user,
-    showPin,
     updateCycle,
 }: SporeTestItem) {
     const dialog = useDialog();
     const [did_spore_grow_sterilized, setDidSporeGrowSterilized] = useState(false);
     const [did_spore_grow_control, setDidSporeGrowControl] = useState(false);
 
-    const setResult = async (u?: UserModel) => {
-        if (!u) {
-            showPin(() => setResult)
-            return;
-        }
+    const setResult = async () => {
         const result = !!did_spore_grow_control && !did_spore_grow_sterilized;
         if (!result) {
             dialog.showDialog({
@@ -38,17 +32,17 @@ function SporeTestItem({
                 }, {
                     children: 'Confirm',
                     className: 'bg-red-200',
-                    onClick: () => update(u, 'failed')
+                    onClick: () => update('failed')
                 }]
             })
         } else {
-            update(u, 'passed')
+            update('passed')
         }
     }
 
-    const update = async (u: UserModel, result: SporeTestResult) => {
+    const update = async (result: SporeTestResult) => {
         if (await updateCycle(cycle.id, {
-            spore_test_user_id: u.id,
+            spore_test_user_id: user.id,
             spore_test_recorded_at: 'now()',
             spore_test_result: result,
         })) {
@@ -101,7 +95,7 @@ function SporeTestItem({
                     />
                 </Switch>
             </div>
-            <Button onClick={() => setResult(user)}>Record Result</Button>
+            <Button onClick={() => setResult()}>Record Result</Button>
         </div>
     )
 }

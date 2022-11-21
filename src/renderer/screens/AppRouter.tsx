@@ -1,32 +1,35 @@
 import React from 'react'
-import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { HashRouter, Route, Routes } from 'react-router-dom'
+import Layout from '../components/Layout'
+import UserGuard from '../components/UserGuard'
+import CheckinScreen from './Checkin/CheckinScreen'
 import CheckoutScreen from './Checkout/CheckoutScreen'
 import DashboardScreen from './Dashboard/DashboardScreen'
-import LabelPrintScreen from './LabelPrintScreen'
-import Layout from './Layout'
-import OpCreateScreen from './OpCreateScreen'
-import OpEditScreen from './OpEditScreen'
-import OpListScreen from './OpListScreen'
-import PatientCreateScreen from './PatientCreateScreen'
-import PatientEditScreen from './PatientEditScreen'
-import PatientListScreen from './PatientListScreen'
-import PatientScreen from './PatientScreen'
-import SettingsScreen from './SettingsScreen'
-import SteriCreateScreen from './SteriCreateScreen'
-import SteriCycleEditScreen from './SteriCycleEditScreen'
-import SteriCycleListScreen from './SteriCycleListScreen'
+import LabelPrintScreen from './LabelPrint/LabelPrintScreen'
+import NotFoundScreen from './NotFoundScreen'
+import PatientCreateScreen from './Patient/PatientCreateScreen'
+import PatientEditScreen from './Patient/PatientEditScreen'
+import PatientListScreen from './Patient/PatientListScreen'
+import PatientScreen from './Patient/PatientScreen'
+import LabelHistoryScreen from './Settings/Label/LabelHistoryScreen'
+import OpCreateScreen from './Settings/Op/OpCreateScreen'
+import OpEditScreen from './Settings/Op/OpEditScreen'
+import OpListScreen from './Settings/Op/OpListScreen'
+import SettingsScreen from './Settings/SettingsScreen'
+import SteriCreateScreen from './Settings/Steri/SteriCreateScreen'
+import SteriEditScreen from './Settings/Steri/SteriEditScreen'
+import SteriListScreen from './Settings/Steri/SteriListScreen'
+import SteriItemCreateScreen from './Settings/SteriItem/SteriItemCreateScreen'
+import SteriItemEditScreen from './Settings/SteriItem/SteriItemEditScreen'
+import SteriItemListScreen from './Settings/SteriItem/SteriItemListScreen'
+import UserCreateScreen from './Settings/User/UserCreateScreen'
+import UserEditScreen from './Settings/User/UserEditScreen'
+import UserListScreen from './Settings/User/UserListScreen'
+import SteriCycleEditScreen from './SteriCycle/SteriCycleEditScreen'
+import SteriCycleListScreen from './SteriCycle/SteriCycleListScreen'
 import SteriCycleScreen from './SteriCycle/SteriCycleScreen'
-import SteriCycleStartScreen from './SteriCycleStartScreen'
-import SteriEditScreen from './SteriEditScreen'
-import SteriItemCreateScreen from './SteriItemCreateScreen'
-import SteriItemEditScreen from './SteriItemEditScreen'
-import SteriItemListScreen from './SteriItemListScreen'
-import SteriListScreen from './SteriListScreen'
+import SteriCycleStartScreen from './SteriCycle/SteriCycleStartScreen'
 import UploadSteriData from './UploadSteriData/UploadSteriData'
-import UserCreateScreen from './UserCreateScreen'
-import UserEditScreen from './UserEditScreen'
-import UserGuard from './UserGuard'
-import UserListScreen from './UserListScreen'
 
 function AppRouter() {
     return (
@@ -39,6 +42,7 @@ function AppRouter() {
                     <Route path='/printlabels' element={<LabelPrintScreen />} />
                     <Route path='/logs' element={<LabelPrintScreen />} />
                     <Route path='/checkout' element={<CheckoutScreen />} />
+                    <Route path='/checkin' element={<CheckinScreen />} />
                     <Route path='/patients'>
                         <Route path='create' element={<PatientCreateScreen />} />
                         <Route path=':patient_id' element={<PatientScreen />} />
@@ -73,9 +77,12 @@ function AppRouter() {
                             <Route path=':item_id/edit' element={<SteriItemEditScreen />} />
                             <Route index element={<SteriItemListScreen />} />
                         </Route>
+                        <Route path='labels'>
+                            <Route index element={<LabelHistoryScreen />} />
+                        </Route>
                         <Route index element={<SettingsScreen />} />
                     </Route>
-                    <Route path='*' element={<Navigate to='/' />} />
+                    <Route path='*' element={<NotFoundScreen />} />
                 </Route>
             </Routes>
         </HashRouter>

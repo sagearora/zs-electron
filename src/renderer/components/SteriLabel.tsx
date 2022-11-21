@@ -3,6 +3,9 @@ import React, { useMemo, useState } from 'react'
 import Button from '../lib/Button'
 import Loading from '../lib/Loading'
 import { SteriLabelModel } from '../models/steri-label.model'
+import {QRCodeSVG} from 'qrcode.react';
+import { createQr } from '../services/qr-service'
+import { QRType } from '../constants'
 
 export type SteriLabelProps = {
     item: SteriLabelModel
@@ -51,11 +54,19 @@ function SteriLabel({
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>}
-            <p className='text-sm'>#{item.id} - {item.steri_item.category}</p>
-            <p className='text-lg font-bold'>{item.steri_item.name}</p>
-            <p className='text-sm font-semibold'>{item.clinic_user.name}</p>
-            <p className='text-sm'>Date: {dayjs(item.created_at).format('YYYY-MM-DD HH:mm')}</p>
-            <p className='text-sm'>Exp: {dayjs(item.expiry_at).format('YYYY-MM-DD HH:mm')}</p>
+            <div className='flex'>
+                <div className='flex-1'>
+                    <p className='text-sm'>#{item.id} - {item.steri_item.category}</p>
+                    <p className='text-lg font-bold'>{item.steri_item.name}</p>
+                    <p className='text-sm font-semibold'>{item.clinic_user.name}</p>
+                    <p className='text-sm'>Date: {dayjs(item.created_at).format('YYYY-MM-DD HH:mm')}</p>
+                    <p className='text-sm'>Exp: {dayjs(item.expiry_at).format('YYYY-MM-DD HH:mm')}</p>
+                </div>
+                <QRCodeSVG value={createQr({
+                    type: QRType.SteriLabel,
+                    id: item.id,
+                })} />
+            </div>
             {more_info && <>
                 {item.steri_cycle_clinic_user && item.steri_cycle && <div className='mt-2'>
                     <p className='text-sm font-semibold'>Sterilization (<span className='capitalize'>{item.steri_cycle.status}</span>)</p>

@@ -2,11 +2,11 @@ import { gql, useMutation } from '@apollo/client'
 import { Dialog, Transition } from '@headlessui/react'
 import React, { Fragment, useRef } from 'react'
 import { LargeInt, PageLimit } from '../../constants'
+import { useDialog } from '../../lib/dialog.context'
 import { PatientFragment, PatientModel } from '../../models/patient.model'
 import { useClinic } from '../../services/clinic.context'
-import { useDialog } from '../../lib/dialog.context'
-import PatientForm from '../PatientForm'
-import { QueryPatientList } from '../PatientListScreen'
+import PatientForm from '../Patient/PatientForm'
+import { QueryPatientList } from '../Patient/PatientListScreen'
 
 export type AddPatientModalProps = {
     show?: boolean;

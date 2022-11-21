@@ -1,32 +1,29 @@
-import { gql, useApolloClient, useMutation, useSubscription } from '@apollo/client';
+import { gql, useMutation, useSubscription } from '@apollo/client';
+import dayjs from 'dayjs';
 import React, { useState } from 'react';
 import SteriLabel from '../../components/SteriLabel';
 import { QRType } from '../../constants';
-import Button from '../../lib/Button';
 import { useDialog } from '../../lib/dialog.context';
 import Loading from '../../lib/Loading';
-import { SteriStatus } from '../../models/steri-cycle.model';
-import { SteriItemFragment } from '../../models/steri-item.model';
-import { SteriLabelFragment, SteriLabelModel } from '../../models/steri-label.model';
-import { UserModel } from '../../models/user.model';
+import { SteriLabelEvent, SteriLabelFragment, SteriLabelModel } from '../../models/steri-label.model';
 import useScanner from '../../services/use-scanner';
-import UserPinDialog from '../UserPinDialog';
+import { useUser } from '../../services/user.context';
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 export type OpLabelScannerProps = {
     appointment_id: number;
     patient_name: string;
 }
 
-const MutationUpdateSteriLabel = gql`
-    mutation update_steri_label($id: bigint!, $steri_item_id: bigint!, $inc_by: Int!, $set: steri_label_set_input!) {
-        update_steri_label_by_pk(pk_columns: {id: $id}, _set: $set) {
-            ${SteriLabelFragment}
-        }
-        update_steri_item_by_pk(
-            pk_columns: {id: $steri_item_id}, 
-            _inc: {total_checked_out: $inc_by}
-        ) {
-            ${SteriItemFragment}
+const MutationInsertSteriLabelEvent = gql`
+    mutation insert_event($object: steri_label_event_insert_input!) {
+        insert_steri_label_event_one(object: $object) {
+            id
+            steri_label {
+                ${SteriLabelFragment}
+            }
         }
     }
 `;
@@ -45,6 +42,7 @@ function AppointmentItemScanner({
     appointment_id,
     patient_name,
 }: OpLabelScannerProps) {
+    const { user } = useUser();
     const {
         data,
         loading,
@@ -53,17 +51,9 @@ function AppointmentItemScanner({
             appointment_id,
         }
     })
-    const apollo = useApolloClient();
     const dialog = useDialog();
-    const [user, setUser] = useState<UserModel | undefined>();
-    const [show_pin, setShowPin] = useState(false);
-    const [updateLabel] = useMutation(MutationUpdateSteriLabel)
+    const [insertEvent] = useMutation(MutationInsertSteriLabelEvent)
     const [loading_label, setLoadingLabel] = useState<{ [id: number]: boolean }>({});
-
-    const onSetUser = (user: UserModel) => {
-        setUser(user);
-        setShowPin(false);
-    }
 
     const onScan = async (data: {
         type: QRType;
@@ -76,49 +66,22 @@ function AppointmentItemScanner({
             const { id } = data;
             // add this label to the load.
             try {
-                const { data: steri_label_data } = await apollo.query({
-                    query: gql`query steri_label($id: bigint!) {
-                        steri_label_by_pk(id: $id) {
-                            id
-                            steri_item_id
-                            steri_cycle {
-                                id
-                                status
+                const { data } = await insertEvent({
+                    variables: {
+                        object: {
+                            type: SteriLabelEvent.AppointmentCheckout,
+                            steri_label_id: id,
+                            clinic_user_id: user.id,
+                            data: {
+                                appointment_id,
                             }
-                            appointment_id
-                        }
-                    }`,
-                    variables: {
-                        id,
-                    },
-                    fetchPolicy: 'network-only'
-                })
-                const steri_label = steri_label_data?.steri_label_by_pk;
-                if (!steri_label) {
-                    dialog.showSimpleDialog('Invalid Label', 'Sorry this item could not be found. You will have to re-sterilize this package.')
-                    return;
-                }
-                if (!steri_label.steri_cycle || steri_label.steri_cycle.status as SteriStatus !== 'finished') {
-                    dialog.showSimpleDialog('Not Sterilized', `This item does not have a successful sterilization record. Please re-sterilize.`)
-                    return;
-                }
-                if (steri_label.appointment_id) {
-                    dialog.showSimpleDialog('Already Used', `This item has been checked out before for an appointment. Please re-sterilize.`)
-                    return;
-                }
-                const { data } = await updateLabel({
-                    variables: {
-                        id,
-                        steri_item_id: steri_label.steri_item_id,
-                        inc_by: 1,
-                        set: {
-                            appointment_id,
-                            appointment_user_id: user.id,
-                            checkout_at: 'now()'
-                        }
+                        },
                     }
                 })
-                const item = data?.update_steri_label_by_pk as SteriLabelModel;
+                const item = data?.insert_steri_label_event_one as {
+                    id: number;
+                    steri_label: SteriLabelModel;
+                }
                 if (!item) {
                     dialog.showToast({
                         message: `Failed to add item`,
@@ -127,7 +90,7 @@ function AppointmentItemScanner({
                     return;
                 }
                 dialog.showToast({
-                    message: `Added ${item.steri_item.name} to ${patient_name}`,
+                    message: `Added ${item.steri_label.steri_item.name} to ${patient_name}`,
                     type: "success",
                 });
             } catch (e) {
@@ -150,15 +113,13 @@ function AppointmentItemScanner({
             [steri_label.id]: true,
         }))
         try {
-            await updateLabel({
+            await insertEvent({
                 variables: {
-                    id: steri_label.id,
-                    steri_item_id: steri_label.steri_item_id,
-                    inc_by: -1,
-                    set: {
-                        appointment_id: null,
-                        appointment_user_id: null,
-                        checkout_at: null,
+                    object: {
+                        steri_label_id: steri_label.id,
+                        type: SteriLabelEvent.AppointmentReturn,
+                        data: {},
+                        clinic_user_id: user.id,
                     }
                 }
             })
@@ -174,28 +135,18 @@ function AppointmentItemScanner({
 
     return (
         <div className='py-4'>
-            <UserPinDialog
-                show={show_pin}
-                onClose={() => setShowPin(false)}
-                setUser={onSetUser} />
-
-            {!user ? <Button className={`bg-green-200`} onClick={() => setShowPin(true)}>
-                <div className='flex items-center'>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                        className="w-6 h-6 mr-2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
-                    </svg>
-                    Scan Items Out For Appointment
-                </div>
-            </Button> : <div className='flex flex-col items-center'>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <div className='flex flex-col items-center'>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 mb-2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
                 </svg>
-                <h2 className='text-md font-semibold'>Use the handheld scanner to scan all items needed for this appointment.</h2>
-                <Button onClick={() => setUser(undefined)}>End Scanning</Button>
-            </div>}
+                {items.length > 0 && <>
+                    <p className='text-5xl font-bold text-green-600'>{items.length} Items</p>
+                    <p className='text-lg'>Last Added: <span className='font-bold text-green-600'>
+                        {items[0]?.steri_item?.name}</span> {dayjs(items[0]?.loaded_at).fromNow()}</p>
+                </>}
+                <h2 className='text-md font-semibold text-gray-600'>Use the handheld scanner to scan all items going into the sterilizer.</h2>
+            </div>
             {loading && <Loading />}
             <div className='grid grid-cols-2 gap-4 mt-4'>
                 {items.map((item) => <SteriLabel

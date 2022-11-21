@@ -1,5 +1,12 @@
 import { SteriStatus } from "./steri-cycle.model";
 
+export enum SteriLabelEvent {
+    SteriCycleAddItem='stericycle_add_item',
+    SteriCycleRemoveItem='stericycle_remove_item',
+    AppointmentCheckout='appointment_checkout',
+    AppointmentReturn='appointment_return',
+}
+
 export type SteriLabelModel = {
     id: number;
     created_at: string;

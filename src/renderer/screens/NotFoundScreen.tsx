@@ -8,7 +8,7 @@ function NotFoundScreen() {
       <div className='h-full flex flex-col overflow-hidden'>
         <div className='flex-1 overflow-y-auto'>
           <div className='container'>
-            <div className='my-6 max-w-screen-md mx-auto container flex flex-col items-center justify-center'>
+            <div className='my-6 mx-auto container flex flex-col items-center justify-center'>
               <p className='text-lg font-bold'>Oops...Not found :(</p>
               <Link to='/'>Go Home</Link>
             </div>

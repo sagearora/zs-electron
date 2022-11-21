@@ -3,11 +3,12 @@ import { ProvideApollo } from './apollo-firebase/with-apollo-firebase';
 import './App.css';
 import environment from './environment';
 import { auth } from './firebase';
-import AppRouter from './screens/AppRouter';
-import LoadingScreen from './screens/LoadingScreen';
-import LoginScreen from './screens/LoginScreen';
-import { ProvideClinic } from './services/clinic.context';
 import { ProvideDialog } from './lib/dialog.context';
+import AppRouter from './screens/AppRouter';
+import LoadingScreen from './components/LoadingScreen';
+import LoginScreen from './screens/Login/LoginScreen';
+import { ProvideClinic } from './services/clinic.context';
+import { ProvideUser } from './services/user.context';
 
 
 function App() {
@@ -23,7 +24,9 @@ function App() {
       >
         <ProvideClinic
           LoadingScreen={<LoadingScreen title='Loading Clinic' />}>
-          <AppRouter />
+          <ProvideUser>
+            <AppRouter />
+          </ProvideUser>
         </ProvideClinic>
       </ProvideApollo>
     </ProvideDialog >

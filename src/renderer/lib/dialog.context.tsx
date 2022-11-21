@@ -14,12 +14,14 @@ export type Toast = {
 
 const AutoCloseDuration = 5000;
 
-const DialogContext = createContext<{
+export type DialogContextProps = {
     showDialog: (_: DialogProps) => void;
     showSimpleDialog: (title: string, message: string) => void;
     showError: (error: any) => void;
     showToast: (toast: Toast) => void;
-}>({} as any);
+}
+
+const DialogContext = createContext<DialogContextProps>({} as any);
 
 export const ProvideDialog = ({
     children,
@@ -76,7 +78,7 @@ export const ProvideDialog = ({
             dialog={open}
             onClose={() => setOpen(undefined)}
         />
-        {toast && <div className="fixed p-2 bottom-0 left-0 w-full z-99">
+        {toast && <div className="fixed p-2 bottom-0 left-0 w-full z-50">
             <div className="max-w-lg relative mx-auto bg-slate-100 border-2 flex items-center p-4 shadow-lg rounded-lg overflow-hidden">
                 <div className={`absolute top-0 left-0 w-full h-1 ${!toast.type && 'bg-slate-600'} ${toast.type === 'error' && 'bg-red-500'} ${toast.type === 'success' && 'bg-green-500'}`} />
                 {toast.type === 'success' && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2 text-green-500">
