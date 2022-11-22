@@ -1,16 +1,31 @@
+const fs = require('fs');
+const path = require('path');
+
+const root = process.cwd();
+
+if (process.env['WINDOWS_CODESIGN_FILE']) {
+    const certPath = path.join(__dirname, 'cert.pfx');
+    const certExists = fs.existsSync(certPath);
+
+    if (certExists) {
+        process.env['WINDOWS_CODESIGN_FILE'] = certPath;
+    }
+}
+
 module.exports = {
     packagerConfig: {},
-    "electronRebuildConfig": {
-        "forceABI": 89
+    electronRebuildConfig: {
+        forceABI: 89
     },
     makers: [
         {
-            "name": "@electron-forge/maker-squirrel",
-            "config": {
-                "name": "zs_electron",
-                "certificateFile": "./cert.pfx",
-                "certificatePassword": process.env.CERTIFICATE_PASSWORD
-            }
+            name: "@electron-forge/maker-squirrel",
+            platforms: ['win32'],
+            config: (arch) => ({
+                name: "zs-electron",
+                certificateFile: process.env['WINDOWS_CODESIGN_FILE'],
+                certificatePassword: process.env['CERTIFICATE_PASSWORD'],
+            }),
         },
         {
             "name": "@electron-forge/maker-zip",
@@ -27,20 +42,20 @@ module.exports = {
             "config": {}
         }
     ],
-    "plugins": [
+    plugins: [
         {
             "name": "@electron-forge/plugin-webpack",
             "config": {
-                "mainConfig": "./webpack.main.config.js",
-                "renderer": {
-                    "config": "./webpack.renderer.config.js",
-                    "entryPoints": [
+                mainConfig: path.join(root, 'webpack.main.config.js'),
+                renderer: {
+                    config: path.join(root, "./webpack.renderer.config.js"),
+                    entryPoints: [
                         {
-                            "html": "./src/renderer/index.html",
-                            "js": "./src/renderer/renderer.tsx",
-                            "name": "main_window",
-                            "preload": {
-                                "js": "./src/main/preload.ts"
+                            html: path.join(root, "./src/renderer/index.html"),
+                            js: path.join(root, "./src/renderer/renderer.tsx"),
+                            name: "main_window",
+                            preload: {
+                                js: path.join(root, "./src/main/preload.ts"),
                             }
                         }
                     ]
@@ -48,16 +63,16 @@ module.exports = {
             }
         }
     ],
-    "publishers": [
+    publishers: [
         {
-            "name": "@electron-forge/publisher-github",
-            "config": {
-                "repository": {
+            name: "@electron-forge/publisher-github",
+            config: {
+                repository: {
                     "owner": "sagearora",
                     "name": "zs-electron"
                 },
-                "prerelease": false,
-                "draft": true
+                prerelease: false,
+                draft: true
             }
         }
     ]
